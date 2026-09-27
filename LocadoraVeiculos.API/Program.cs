@@ -16,7 +16,6 @@ builder.Services.AddSwaggerGen(options =>
     {
         Title = "Locadora de Veículos API",
         Version = "v1",
-        Description = "API para sistema de aluguel de veículos"
         Description = "API RESTful para sistema de locadora de veículos - Etapa 2 (CRUDs, Relacionamentos e Filtros com Joins)"
     });
 });
