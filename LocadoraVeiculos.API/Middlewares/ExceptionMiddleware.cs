@@ -49,3 +49,4 @@ namespace LocadoraVeiculos.API.Middlewares
         }
     }
 }
+

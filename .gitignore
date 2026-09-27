@@ -17,6 +17,26 @@ x86/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
 
-# Logs
-*.log
+# Database files
+*.mdf
+*.ldf
+*.ndf
+*.db
+*.sqlite
+*.sqlite3
 
+# Logs & temporary files
+*.log
+*.tmp
+*.temp
+TestResults/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Secrets & Environment configs
+appsettings.*.local.json
+secrets.json
+*.env

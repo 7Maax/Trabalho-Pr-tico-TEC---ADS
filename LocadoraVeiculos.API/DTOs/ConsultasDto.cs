@@ -71,3 +71,4 @@ namespace LocadoraVeiculos.API.DTOs
         public decimal TotalReceitaGerada { get; set; }
     }
 }
+
