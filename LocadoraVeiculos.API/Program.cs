@@ -1,4 +1,5 @@
 using LocadoraVeiculos.API.Data;
+using LocadoraVeiculos.API.Middlewares;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -15,11 +16,13 @@ builder.Services.AddSwaggerGen(options =>
     {
         Title = "Locadora de Veículos API",
         Version = "v1",
-        Description = "API para sistema de aluguel de veículos"
+        Description = "API RESTful para sistema de locadora de veículos - Etapa 2 (CRUDs, Relacionamentos e Filtros com Joins)"
     });
 });
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 using (var scope = app.Services.CreateScope())
 {
