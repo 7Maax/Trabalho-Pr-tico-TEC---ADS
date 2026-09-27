@@ -15,8 +15,7 @@ builder.Services.AddSwaggerGen(options =>
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Locadora de Veículos API",
-        Version = "v1",
-        Description = "API RESTful para sistema de locadora de veículos - Etapa 2 (CRUDs, Relacionamentos e Filtros com Joins)"
+        Version = "v1"
     });
 });
 
