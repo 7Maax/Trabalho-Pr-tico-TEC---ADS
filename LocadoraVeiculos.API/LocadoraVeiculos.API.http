@@ -1,6 +1,14 @@
-@LocadoraVeiculos.API_HostAddress = http://localhost:5205
+@baseUrl = http://localhost:5205
 
-GET {{LocadoraVeiculos.API_HostAddress}}/weatherforecast/
+GET {{baseUrl}}/api/veiculos
 Accept: application/json
 
 ###
+
+GET {{baseUrl}}/api/consultas/alugueis-detalhados
+Accept: application/json
+
+###
+
+GET {{baseUrl}}/api/consultas/faturamento-por-categoria
+Accept: application/json
