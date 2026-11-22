@@ -22,9 +22,24 @@ namespace LocadoraVeiculos.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ClienteResponseDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<ClienteResponseDto>>> GetAll(
+            [FromQuery] string? nome,
+            [FromQuery] string? cpf,
+            [FromQuery] string? email)
         {
-            var clientes = await _context.Clientes
+            var query = _context.Clientes.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(nome))
+                query = query.Where(c => c.Nome.Contains(nome));
+
+            if (!string.IsNullOrWhiteSpace(cpf))
+                query = query.Where(c => c.CPF.Contains(cpf));
+
+            if (!string.IsNullOrWhiteSpace(email))
+                query = query.Where(c => c.Email.Contains(email));
+
+            var clientes = await query
+                .OrderBy(c => c.Nome)
                 .Select(c => new ClienteResponseDto
                 {
                     Id = c.Id,

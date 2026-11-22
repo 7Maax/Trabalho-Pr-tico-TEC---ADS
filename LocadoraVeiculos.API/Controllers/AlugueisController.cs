@@ -22,11 +22,27 @@ namespace LocadoraVeiculos.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AluguelResponseDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<AluguelResponseDto>>> GetAll(
+            [FromQuery] string? status,
+            [FromQuery] int? clienteId,
+            [FromQuery] int? veiculoId)
         {
-            var alugueis = await _context.Alugueis
+            var query = _context.Alugueis
                 .Include(a => a.Cliente)
                 .Include(a => a.Veiculo)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(status))
+                query = query.Where(a => a.Status == status);
+
+            if (clienteId.HasValue)
+                query = query.Where(a => a.ClienteId == clienteId.Value);
+
+            if (veiculoId.HasValue)
+                query = query.Where(a => a.VeiculoId == veiculoId.Value);
+
+            var alugueis = await query
+                .OrderByDescending(a => a.DataInicio)
                 .Select(a => MapToDto(a))
                 .ToListAsync();
 

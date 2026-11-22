@@ -21,9 +21,20 @@ namespace LocadoraVeiculos.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<FabricanteResponseDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<FabricanteResponseDto>>> GetAll(
+            [FromQuery] string? nome,
+            [FromQuery] string? paisOrigem)
         {
-            var fabricantes = await _context.Fabricantes
+            var query = _context.Fabricantes.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(nome))
+                query = query.Where(f => f.Nome.Contains(nome));
+
+            if (!string.IsNullOrWhiteSpace(paisOrigem))
+                query = query.Where(f => f.PaisOrigem.Contains(paisOrigem));
+
+            var fabricantes = await query
+                .OrderBy(f => f.Nome)
                 .Select(f => new FabricanteResponseDto
                 {
                     Id = f.Id,

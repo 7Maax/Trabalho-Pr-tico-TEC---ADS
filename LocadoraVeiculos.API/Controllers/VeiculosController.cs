@@ -21,11 +21,35 @@ namespace LocadoraVeiculos.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<VeiculoResponseDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<VeiculoResponseDto>>> GetAll(
+            [FromQuery] string? modelo,
+            [FromQuery] string? placa,
+            [FromQuery] int? fabricanteId,
+            [FromQuery] int? categoriaId,
+            [FromQuery] bool? disponivel)
         {
-            var veiculos = await _context.Veiculos
+            var query = _context.Veiculos
                 .Include(v => v.Fabricante)
                 .Include(v => v.Categoria)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(modelo))
+                query = query.Where(v => v.Modelo.Contains(modelo));
+
+            if (!string.IsNullOrWhiteSpace(placa))
+                query = query.Where(v => v.Placa.Contains(placa));
+
+            if (fabricanteId.HasValue)
+                query = query.Where(v => v.FabricanteId == fabricanteId.Value);
+
+            if (categoriaId.HasValue)
+                query = query.Where(v => v.CategoriaId == categoriaId.Value);
+
+            if (disponivel.HasValue)
+                query = query.Where(v => v.Disponivel == disponivel.Value);
+
+            var veiculos = await query
+                .OrderBy(v => v.Modelo)
                 .Select(v => new VeiculoResponseDto
                 {
                     Id = v.Id,
@@ -35,7 +59,9 @@ namespace LocadoraVeiculos.API.Controllers
                     Placa = v.Placa,
                     Cor = v.Cor,
                     Disponivel = v.Disponivel,
+                    FabricanteId = v.FabricanteId,
                     Fabricante = v.Fabricante.Nome,
+                    CategoriaId = v.CategoriaId,
                     Categoria = v.Categoria.Nome,
                     ValorDiaria = v.Categoria.ValorDiaria
                 })
@@ -60,7 +86,9 @@ namespace LocadoraVeiculos.API.Controllers
                     Placa = v.Placa,
                     Cor = v.Cor,
                     Disponivel = v.Disponivel,
+                    FabricanteId = v.FabricanteId,
                     Fabricante = v.Fabricante.Nome,
+                    CategoriaId = v.CategoriaId,
                     Categoria = v.Categoria.Nome,
                     ValorDiaria = v.Categoria.ValorDiaria
                 })
@@ -89,7 +117,9 @@ namespace LocadoraVeiculos.API.Controllers
                 Placa = v.Placa,
                 Cor = v.Cor,
                 Disponivel = v.Disponivel,
+                FabricanteId = v.FabricanteId,
                 Fabricante = v.Fabricante.Nome,
+                CategoriaId = v.CategoriaId,
                 Categoria = v.Categoria.Nome,
                 ValorDiaria = v.Categoria.ValorDiaria
             });
@@ -186,7 +216,9 @@ namespace LocadoraVeiculos.API.Controllers
                     Placa = v.Placa,
                     Cor = v.Cor,
                     Disponivel = v.Disponivel,
+                    FabricanteId = v.FabricanteId,
                     Fabricante = v.Fabricante.Nome,
+                    CategoriaId = v.CategoriaId,
                     Categoria = v.Categoria.Nome,
                     ValorDiaria = v.Categoria.ValorDiaria
                 })

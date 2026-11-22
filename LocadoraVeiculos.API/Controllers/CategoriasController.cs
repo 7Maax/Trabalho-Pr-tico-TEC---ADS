@@ -21,9 +21,24 @@ namespace LocadoraVeiculos.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoriaResponseDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<CategoriaResponseDto>>> GetAll(
+            [FromQuery] string? nome,
+            [FromQuery] decimal? valorMin,
+            [FromQuery] decimal? valorMax)
         {
-            var categorias = await _context.Categorias
+            var query = _context.Categorias.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(nome))
+                query = query.Where(c => c.Nome.Contains(nome) || c.Descricao.Contains(nome));
+
+            if (valorMin.HasValue)
+                query = query.Where(c => c.ValorDiaria >= valorMin.Value);
+
+            if (valorMax.HasValue)
+                query = query.Where(c => c.ValorDiaria <= valorMax.Value);
+
+            var categorias = await query
+                .OrderBy(c => c.ValorDiaria)
                 .Select(c => new CategoriaResponseDto
                 {
                     Id = c.Id,

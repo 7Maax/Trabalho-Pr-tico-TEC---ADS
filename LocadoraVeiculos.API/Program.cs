@@ -9,6 +9,15 @@ builder.Services.AddDbContext<LocadoraContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("LocadoraConnection")));
 
 builder.Services.AddControllers();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -37,7 +46,12 @@ app.UseSwaggerUI(options =>
     options.RoutePrefix = string.Empty;
 });
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
+app.UseCors("AllowFrontend");
 app.UseAuthorization();
 app.MapControllers();
 

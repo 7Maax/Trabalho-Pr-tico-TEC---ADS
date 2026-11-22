@@ -40,3 +40,9 @@ Desktop.ini
 appsettings.*.local.json
 secrets.json
 *.env
+
+# Front-end (Node / Vite / React)
+node_modules/
+dist/
+.vite/
+*.local

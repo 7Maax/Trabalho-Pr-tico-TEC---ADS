@@ -38,7 +38,9 @@ namespace LocadoraVeiculos.API.DTOs
         public string  Placa          { get; set; } = string.Empty;
         public string  Cor            { get; set; } = string.Empty;
         public bool    Disponivel     { get; set; }
+        public int     FabricanteId   { get; set; }
         public string  Fabricante     { get; set; } = string.Empty;
+        public int     CategoriaId    { get; set; }
         public string  Categoria      { get; set; } = string.Empty;
         public decimal ValorDiaria    { get; set; }
     }
