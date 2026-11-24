@@ -12,12 +12,10 @@ export function CategoriasPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  // Filtros personalizados (3 campos: nome/descricao, valorMin, valorMax)
   const [filtroNome, setFiltroNome] = useState('');
   const [filtroValorMin, setFiltroValorMin] = useState('');
   const [filtroValorMax, setFiltroValorMax] = useState('');
 
-  // Modal Criar / Editar
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Categoria | null>(null);
   const [nome, setNome] = useState('');
@@ -135,7 +133,7 @@ export function CategoriasPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">Categorias</h1>
           <p className="mt-1 text-sm text-slate-500">
-            Gerenciamento de categorias tarifárias com filtro por nome/descrição e faixa de diária.
+            Gerenciamento de categorias e tarifas diárias dos veículos.
           </p>
         </div>
         <button
@@ -151,7 +149,6 @@ export function CategoriasPage() {
       {error && <Alert type="error" message={error} onClose={() => setError(null)} />}
       {success && <Alert type="success" message={success} onClose={() => setSuccess(null)} />}
 
-      {/* Barra de Filtros */}
       <form
         onSubmit={handleFilter}
         className="grid grid-cols-1 gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-xs sm:grid-cols-4"
@@ -218,7 +215,6 @@ export function CategoriasPage() {
         </div>
       </form>
 
-      {/* Tabela */}
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
@@ -249,7 +245,7 @@ export function CategoriasPage() {
                   <tr key={item.id} className="hover:bg-slate-50/80">
                     <td className="px-5 py-3.5 font-mono text-xs text-slate-500">#{item.id}</td>
                     <td className="px-5 py-3.5 font-semibold text-slate-900">{item.nome}</td>
-                    <td className="px-5 py-3.5 text-slate-600">{item.descricao || '—'}</td>
+                    <td className="px-5 py-3.5 text-slate-600">{item.descricao || '-'}</td>
                     <td className="px-5 py-3.5">
                       <span className="inline-flex rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700">
                         {formatCurrency(item.valorDiaria)} / dia

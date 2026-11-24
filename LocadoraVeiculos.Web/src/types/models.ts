@@ -94,7 +94,6 @@ export interface DevolucaoRequest {
   quilometragemFinal: number;
 }
 
-// Consultas com INNER / LEFT JOIN (/api/consultas)
 export interface AluguelDetalhado {
   aluguelId: number;
   clienteNome: string;

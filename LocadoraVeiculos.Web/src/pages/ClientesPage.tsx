@@ -13,12 +13,10 @@ export function ClientesPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  // Filtros personalizados (3 campos: nome, cpf, email)
   const [filtroNome, setFiltroNome] = useState('');
   const [filtroCpf, setFiltroCpf] = useState('');
   const [filtroEmail, setFiltroEmail] = useState('');
 
-  // Modal Criar / Editar
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Cliente | null>(null);
   const [nome, setNome] = useState('');
@@ -29,7 +27,6 @@ export function ClientesPage() {
   const [dataNascimento, setDataNascimento] = useState('');
   const [saving, setSaving] = useState(false);
 
-  // Modal Histórico do Cliente (GET /api/alugueis/cliente/{clienteId})
   const [historyOpen, setHistoryOpen] = useState(false);
   const [historyClient, setHistoryClient] = useState<Cliente | null>(null);
   const [historyAlugueis, setHistoryAlugueis] = useState<Aluguel[]>([]);
@@ -160,7 +157,7 @@ export function ClientesPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">Clientes</h1>
           <p className="mt-1 text-sm text-slate-500">
-            Gestão da carteira de clientes com filtros por nome, CPF e e-mail e consulta de histórico.
+            Cadastro de clientes com filtros por nome, CPF e e-mail e consulta de histórico.
           </p>
         </div>
         <button
@@ -176,7 +173,6 @@ export function ClientesPage() {
       {error && <Alert type="error" message={error} onClose={() => setError(null)} />}
       {success && <Alert type="success" message={success} onClose={() => setSuccess(null)} />}
 
-      {/* Barra de Filtros */}
       <form
         onSubmit={handleFilter}
         className="grid grid-cols-1 gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-xs sm:grid-cols-4"
@@ -233,7 +229,6 @@ export function ClientesPage() {
         </div>
       </form>
 
-      {/* Tabela */}
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
@@ -272,10 +267,10 @@ export function ClientesPage() {
                     <td className="px-5 py-3.5 font-mono text-xs text-slate-700">{c.cpf}</td>
                     <td className="px-5 py-3.5">
                       <div className="text-slate-700">{c.email}</div>
-                      <div className="text-xs text-slate-500">{c.telefone || '—'}</div>
+                      <div className="text-xs text-slate-500">{c.telefone || '-'}</div>
                     </td>
                     <td className="px-5 py-3.5 font-mono text-xs text-slate-600">
-                      {c.cnh || '—'}
+                      {c.cnh || '-'}
                     </td>
                     <td className="px-5 py-3.5 text-slate-600">{formatDate(c.dataNascimento)}</td>
                     <td className="px-5 py-3.5 text-right">
@@ -314,11 +309,10 @@ export function ClientesPage() {
         </div>
       </div>
 
-      {/* Modal Criar/Editar */}
       <Modal
         open={modalOpen}
         title={editing ? 'Editar Cliente' : 'Novo Cliente'}
-        subtitle="CPF e e-mail devem ser únicos no sistema."
+        subtitle="CPF e e-mail devem ser únicos no cadastro."
         onClose={() => setModalOpen(false)}
         maxWidthClass="max-w-xl"
       >
@@ -417,11 +411,10 @@ export function ClientesPage() {
         </form>
       </Modal>
 
-      {/* Modal Histórico do Cliente */}
       <Modal
         open={historyOpen}
-        title={`Histórico de Locações — ${historyClient?.nome ?? ''}`}
-        subtitle="Rota consumida: GET /api/alugueis/cliente/{clienteId}"
+        title={`Histórico de Locações - ${historyClient?.nome ?? ''}`}
+        subtitle="Locações vinculadas a este cliente."
         onClose={() => setHistoryOpen(false)}
         maxWidthClass="max-w-2xl"
       >
@@ -452,7 +445,7 @@ export function ClientesPage() {
                       <div className="font-mono text-xs text-slate-500">{a.placa}</div>
                     </td>
                     <td className="px-3 py-2.5 text-xs text-slate-600">
-                      {formatDate(a.dataInicio)} → {formatDate(a.dataDevolucao ?? a.dataFimPrevista)}
+                      {formatDate(a.dataInicio)} a {formatDate(a.dataDevolucao ?? a.dataFimPrevista)}
                     </td>
                     <td className="px-3 py-2.5 font-semibold text-slate-900">
                       {formatCurrency(a.valorTotal)}

@@ -76,10 +76,10 @@ export function DashboardPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-            Dashboard — Visão Geral
+            Visão Geral
           </h1>
           <p className="mt-1 text-sm text-slate-500">
-            Indicadores operacionais e financeiros em tempo real diretamente do SQL Server.
+            Resumo da frota, contratos ativos e faturamento da locadora.
           </p>
         </div>
         <div className="flex items-center gap-2.5">
@@ -103,7 +103,6 @@ export function DashboardPage() {
 
       {error && <Alert type="error" message={error} onClose={() => setError(null)} />}
 
-      {/* KPI Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
           <div className="flex items-center justify-between">
@@ -115,7 +114,7 @@ export function DashboardPage() {
             </div>
           </div>
           <p className="mt-3 text-3xl font-bold text-slate-900">
-            {loading ? '—' : totalVeiculos}
+            {loading ? '-' : totalVeiculos}
           </p>
           <p className="mt-1 text-xs font-medium text-emerald-600">
             {loading ? 'Carregando...' : `${veiculosDisponiveis} disponíveis para locação`}
@@ -132,7 +131,7 @@ export function DashboardPage() {
             </div>
           </div>
           <p className="mt-3 text-3xl font-bold text-slate-900">
-            {loading ? '—' : alugueisAtivos.length}
+            {loading ? '-' : alugueisAtivos.length}
           </p>
           <p className="mt-1 text-xs text-slate-500">Contratos aguardando devolução</p>
         </div>
@@ -147,9 +146,9 @@ export function DashboardPage() {
             </div>
           </div>
           <p className="mt-3 text-3xl font-bold text-slate-900">
-            {loading ? '—' : totalClientes}
+            {loading ? '-' : totalClientes}
           </p>
-          <p className="mt-1 text-xs text-slate-500">Base ativa no banco de dados</p>
+          <p className="mt-1 text-xs text-slate-500">Total na base de clientes</p>
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
@@ -162,13 +161,12 @@ export function DashboardPage() {
             </div>
           </div>
           <p className="mt-3 text-3xl font-bold text-slate-900">
-            {loading ? '—' : formatCurrency(receitaTotal)}
+            {loading ? '-' : formatCurrency(receitaTotal)}
           </p>
-          <p className="mt-1 text-xs text-slate-500">Consolidado via INNER JOIN</p>
+          <p className="mt-1 text-xs text-slate-500">Soma dos contratos finalizados</p>
         </div>
       </div>
 
-      {/* Gráficos das Consultas */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
           <div className="mb-4 flex items-center justify-between">
@@ -177,7 +175,7 @@ export function DashboardPage() {
                 Faturamento por Categoria
               </h2>
               <p className="text-xs text-slate-500">
-                GET /api/consultas/faturamento-por-categoria
+                Total faturado em locações concluídas
               </p>
             </div>
             <Link
@@ -215,14 +213,14 @@ export function DashboardPage() {
                 Receita por Fabricante
               </h2>
               <p className="text-xs text-slate-500">
-                GET /api/consultas/fabricantes-desempenho (LEFT JOIN)
+                Desempenho acumulado por montadora
               </p>
             </div>
             <Link
               to="/consultas"
               className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700"
             >
-              Explorar JOINs <ArrowRight className="h-3.5 w-3.5" />
+              Ver consultas <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
           {desempenhoFabricantes.length === 0 ? (
@@ -247,22 +245,21 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* Tabela de Aluguéis Ativos */}
       <div className="rounded-2xl border border-slate-200 bg-white shadow-xs">
         <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
           <div>
             <h2 className="text-base font-semibold text-slate-900">
-              Aluguéis Ativos no Momento
+              Aluguéis Ativos
             </h2>
             <p className="text-xs text-slate-500">
-              Consulta consolidada com INNER JOIN entre 5 tabelas
+              Locações em andamento aguardando devolução
             </p>
           </div>
           <Link
             to="/alugueis"
             className="text-xs font-semibold text-blue-600 hover:text-blue-700"
           >
-            Gerenciar todos →
+            Gerenciar todos
           </Link>
         </div>
 
@@ -304,7 +301,7 @@ export function DashboardPage() {
                     </td>
                     <td className="px-5 py-3.5 text-slate-600">{item.categoriaNome}</td>
                     <td className="px-5 py-3.5 text-slate-600">
-                      {formatDate(item.dataInicio)} → {formatDate(item.dataFimPrevista)}
+                      {formatDate(item.dataInicio)} a {formatDate(item.dataFimPrevista)}
                     </td>
                     <td className="px-5 py-3.5 font-medium text-slate-900">
                       {formatCurrency(item.valorDiaria)}

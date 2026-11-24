@@ -15,14 +15,12 @@ export function VeiculosPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  // Filtros personalizados (5 campos: modelo, placa, fabricanteId, categoriaId, disponivel)
   const [filtroModelo, setFiltroModelo] = useState('');
   const [filtroPlaca, setFiltroPlaca] = useState('');
   const [filtroFabricanteId, setFiltroFabricanteId] = useState('');
   const [filtroCategoriaId, setFiltroCategoriaId] = useState('');
   const [filtroDisponivel, setFiltroDisponivel] = useState('');
 
-  // Modal Criar / Editar
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Veiculo | null>(null);
   const [modelo, setModelo] = useState('');
@@ -187,7 +185,7 @@ export function VeiculosPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">Frota de Veículos</h1>
           <p className="mt-1 text-sm text-slate-500">
-            Cadastro completo da frota com filtros por modelo, placa, fabricante, categoria e disponibilidade.
+            Controle da frota com filtros por modelo, placa, fabricante, categoria e disponibilidade.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -213,7 +211,6 @@ export function VeiculosPage() {
       {error && <Alert type="error" message={error} onClose={() => setError(null)} />}
       {success && <Alert type="success" message={success} onClose={() => setSuccess(null)} />}
 
-      {/* Barra de Filtros */}
       <form
         onSubmit={handleFilter}
         className="grid grid-cols-1 gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-xs sm:grid-cols-2 lg:grid-cols-6"
@@ -304,7 +301,6 @@ export function VeiculosPage() {
         </div>
       </form>
 
-      {/* Tabela */}
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
@@ -387,7 +383,7 @@ export function VeiculosPage() {
       <Modal
         open={modalOpen}
         title={editing ? 'Editar Veículo' : 'Novo Veículo'}
-        subtitle="Informe os dados técnicos e vincule ao fabricante e categoria."
+        subtitle="Informe os dados do veículo e vincule fabricante e categoria."
         onClose={() => setModalOpen(false)}
         maxWidthClass="max-w-xl"
       >
@@ -483,7 +479,7 @@ export function VeiculosPage() {
               <option value="">Selecione...</option>
               {categorias.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.nome} — {formatCurrency(c.valorDiaria)}/dia
+                  {c.nome} ({formatCurrency(c.valorDiaria)}/dia)
                 </option>
               ))}
             </select>

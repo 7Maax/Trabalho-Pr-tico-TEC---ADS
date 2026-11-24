@@ -20,7 +20,6 @@ export function AlugueisPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  // 6 filtros da rota GET /api/consultas/alugueis-detalhados
   const [filtroCliente, setFiltroCliente] = useState('');
   const [filtroModelo, setFiltroModelo] = useState('');
   const [filtroFabricante, setFiltroFabricante] = useState('');
@@ -28,7 +27,6 @@ export function AlugueisPage() {
   const [filtroDataInicio, setFiltroDataInicio] = useState('');
   const [filtroDataFim, setFiltroDataFim] = useState('');
 
-  // Modal Nova Locação
   const [createOpen, setCreateOpen] = useState(false);
   const [clienteId, setClienteId] = useState('');
   const [veiculoId, setVeiculoId] = useState('');
@@ -36,7 +34,6 @@ export function AlugueisPage() {
   const [dataFimPrevista, setDataFimPrevista] = useState('');
   const [saving, setSaving] = useState(false);
 
-  // Modal Registrar Devolução
   const [devolucaoTarget, setDevolucaoTarget] = useState<AluguelDetalhado | null>(null);
   const [dataDevolucao, setDataDevolucao] = useState('');
   const [quilometragemFinal, setQuilometragemFinal] = useState('');
@@ -122,7 +119,7 @@ export function AlugueisPage() {
         dataFimPrevista,
       });
       setCreateOpen(false);
-      setSuccess('Locação registrada com sucesso! O veículo foi marcado como indisponível.');
+      setSuccess('Locação registrada com sucesso. O veículo foi marcado como indisponível.');
       await loadAlugueis(currentFilters());
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Erro ao registrar locação.');
@@ -151,7 +148,7 @@ export function AlugueisPage() {
       });
       setDevolucaoTarget(null);
       setSuccess(
-        `Devolução do aluguel #${updated.id} concluída! Valor total calculado: ${formatCurrency(
+        `Devolução do aluguel #${updated.id} concluída. Valor total calculado: ${formatCurrency(
           updated.valorTotal
         )}.`
       );
@@ -175,7 +172,7 @@ export function AlugueisPage() {
     setSuccess(null);
     try {
       await api.alugueis.cancelar(item.aluguelId);
-      setSuccess(`Aluguel #${item.aluguelId} cancelado e veículo liberado novamente.`);
+      setSuccess(`Aluguel #${item.aluguelId} cancelado e veículo liberado.`);
       await loadAlugueis(currentFilters());
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Erro ao cancelar aluguel.');
@@ -198,9 +195,9 @@ export function AlugueisPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Gestão de Aluguéis</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Aluguéis</h1>
           <p className="mt-1 text-sm text-slate-500">
-            Registro de locações, devolução com cálculo automático e cancelamento. Listagem com INNER JOIN em 5 tabelas.
+            Registro de locações, devolução com cálculo de diárias e cancelamento de contratos ativos.
           </p>
         </div>
         <button
@@ -216,7 +213,6 @@ export function AlugueisPage() {
       {error && <Alert type="error" message={error} onClose={() => setError(null)} />}
       {success && <Alert type="success" message={success} onClose={() => setSuccess(null)} />}
 
-      {/* Barra de Filtros (6 campos) */}
       <form
         onSubmit={handleFilter}
         className="grid grid-cols-1 gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-xs sm:grid-cols-2 lg:grid-cols-7"
@@ -307,7 +303,6 @@ export function AlugueisPage() {
         </div>
       </form>
 
-      {/* Tabela */}
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
@@ -351,7 +346,7 @@ export function AlugueisPage() {
                         {a.fabricanteNome} {a.veiculoModelo}
                       </div>
                       <div className="text-xs text-slate-500">
-                        {a.veiculoPlaca} • {a.categoriaNome}
+                        {a.veiculoPlaca} / {a.categoriaNome}
                       </div>
                     </td>
                     <td className="px-4 py-3.5 text-xs text-slate-600">
@@ -366,7 +361,7 @@ export function AlugueisPage() {
                     <td className="px-4 py-3.5 text-xs text-slate-600">
                       <div>Ini: {formatNumber(a.quilometragemInicial, 'km')}</div>
                       <div>
-                        Fim: {a.quilometragemFinal !== null ? formatNumber(a.quilometragemFinal, 'km') : '—'}
+                        Fim: {a.quilometragemFinal !== null ? formatNumber(a.quilometragemFinal, 'km') : '-'}
                       </div>
                     </td>
                     <td className="px-4 py-3.5">
@@ -412,11 +407,10 @@ export function AlugueisPage() {
         </div>
       </div>
 
-      {/* Modal Nova Locação */}
       <Modal
         open={createOpen}
         title="Nova Locação"
-        subtitle="Apenas veículos disponíveis (GET /api/veiculos/disponiveis) são listados."
+        subtitle="Selecione o cliente, o veículo disponível e o período previsto."
         onClose={() => setCreateOpen(false)}
         maxWidthClass="max-w-xl"
       >
@@ -432,7 +426,7 @@ export function AlugueisPage() {
               <option value="">Selecione um cliente...</option>
               {clientes.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.nome} — CPF: {c.cpf}
+                  {c.nome} (CPF: {c.cpf})
                 </option>
               ))}
             </select>
@@ -451,7 +445,7 @@ export function AlugueisPage() {
               <option value="">Selecione um veículo disponível...</option>
               {veiculosDisponiveis.map((v) => (
                 <option key={v.id} value={v.id}>
-                  {v.fabricante} {v.modelo} ({v.placa}) — {v.categoria} —{' '}
+                  {v.fabricante} {v.modelo} ({v.placa}) - {v.categoria} -{' '}
                   {formatCurrency(v.valorDiaria)}/dia
                 </option>
               ))}
@@ -493,7 +487,7 @@ export function AlugueisPage() {
             <div className="rounded-xl border border-blue-100 bg-blue-50/70 p-3.5 text-sm text-blue-900">
               <p className="font-semibold">Previsão da Locação</p>
               <p className="mt-0.5 text-xs text-blue-800">
-                {estimatedDays} dia(s) × {formatCurrency(selectedVehicle.valorDiaria)} ={' '}
+                {estimatedDays} dia(s) x {formatCurrency(selectedVehicle.valorDiaria)} ={' '}
                 <strong>{formatCurrency(estimatedDays * selectedVehicle.valorDiaria)}</strong> (KM
                 inicial: {formatNumber(selectedVehicle.quilometragem, 'km')})
               </p>
@@ -519,16 +513,15 @@ export function AlugueisPage() {
         </form>
       </Modal>
 
-      {/* Modal Registrar Devolução */}
       <Modal
         open={Boolean(devolucaoTarget)}
-        title={`Registrar Devolução — Aluguel #${devolucaoTarget?.aluguelId ?? ''}`}
-        subtitle="PUT /api/alugueis/{id}/devolver — calcula o total e libera o veículo."
+        title={`Registrar Devolução #${devolucaoTarget?.aluguelId ?? ''}`}
+        subtitle="Informe a data e a quilometragem final para encerrar o contrato."
         onClose={() => setDevolucaoTarget(null)}
       >
         {devolucaoTarget && (
           <form onSubmit={handleDevolucaoSubmit} className="space-y-4">
-            <div className="rounded-xl bg-slate-50 p-3.5 text-xs text-slate-700 space-y-1">
+            <div className="space-y-1 rounded-xl bg-slate-50 p-3.5 text-xs text-slate-700">
               <div>
                 <strong>Cliente:</strong> {devolucaoTarget.clienteNome}
               </div>
@@ -537,7 +530,7 @@ export function AlugueisPage() {
                 {devolucaoTarget.veiculoModelo} ({devolucaoTarget.veiculoPlaca})
               </div>
               <div>
-                <strong>Início:</strong> {formatDateTime(devolucaoTarget.dataInicio)} •{' '}
+                <strong>Início:</strong> {formatDateTime(devolucaoTarget.dataInicio)} |{' '}
                 <strong>KM Inicial:</strong> {formatNumber(devolucaoTarget.quilometragemInicial, 'km')}
               </div>
               <div>

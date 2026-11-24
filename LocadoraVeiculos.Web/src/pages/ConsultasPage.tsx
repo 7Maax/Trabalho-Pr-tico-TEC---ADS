@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useState } from 'react';
 import {
   Bar,
   BarChart,
@@ -35,31 +35,31 @@ const TABS: { id: TabId; label: string; route: string; joinInfo: string }[] = [
     id: 'alugueis-detalhados',
     label: '1. Aluguéis Detalhados',
     route: 'GET /api/consultas/alugueis-detalhados',
-    joinInfo: 'INNER JOIN em 5 tabelas (Alugueis ⨝ Clientes ⨝ Veiculos ⨝ Fabricantes ⨝ Categorias)',
+    joinInfo: 'INNER JOIN: Alugueis, Clientes, Veiculos, Fabricantes e Categorias',
   },
   {
     id: 'faturamento-categoria',
     label: '2. Faturamento / Categoria',
     route: 'GET /api/consultas/faturamento-por-categoria',
-    joinInfo: 'INNER JOIN + GROUP BY / SUM (Categorias ⨝ Veiculos ⨝ Alugueis)',
+    joinInfo: 'INNER JOIN com GROUP BY e SUM: Categorias, Veiculos e Alugueis',
   },
   {
     id: 'clientes-resumo',
     label: '3. Resumo de Clientes',
     route: 'GET /api/consultas/clientes-resumo-locacoes',
-    joinInfo: 'LEFT OUTER JOIN (Clientes ⟕ Alugueis via GroupJoin + DefaultIfEmpty)',
+    joinInfo: 'LEFT OUTER JOIN: Clientes e Alugueis',
   },
   {
     id: 'veiculos-utilizacao',
     label: '4. Utilização de Veículos',
     route: 'GET /api/consultas/veiculos-utilizacao',
-    joinInfo: 'INNER JOIN + LEFT OUTER JOIN (Veiculos ⨝ Fabricantes ⨝ Categorias ⟕ Alugueis)',
+    joinInfo: 'INNER JOIN + LEFT OUTER JOIN: Veiculos, Fabricantes, Categorias e Alugueis',
   },
   {
     id: 'fabricantes-desempenho',
     label: '5. Desempenho Fabricantes',
     route: 'GET /api/consultas/fabricantes-desempenho',
-    joinInfo: 'LEFT OUTER JOIN Múltiplo (Fabricantes ⟕ Veiculos ⟕ Alugueis)',
+    joinInfo: 'LEFT OUTER JOIN múltiplo: Fabricantes, Veiculos e Alugueis',
   },
 ];
 
@@ -68,38 +68,31 @@ export function ConsultasPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Opções para dropdowns
   const [fabricantes, setFabricantes] = useState<Fabricante[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
 
-  // Resultados
   const [alugueis, setAlugueis] = useState<AluguelDetalhado[]>([]);
   const [faturamento, setFaturamento] = useState<FaturamentoCategoria[]>([]);
   const [clientesResumo, setClientesResumo] = useState<ClienteResumoLocacoes[]>([]);
   const [veiculosUtilizacao, setVeiculosUtilizacao] = useState<VeiculoUtilizacao[]>([]);
   const [fabricantesDesempenho, setFabricantesDesempenho] = useState<FabricanteDesempenho[]>([]);
 
-  // Filtros Tab 1
   const [t1Cliente, setT1Cliente] = useState('');
   const [t1Modelo, setT1Modelo] = useState('');
   const [t1Fabricante, setT1Fabricante] = useState('');
   const [t1Status, setT1Status] = useState('');
 
-  // Filtros Tab 2
   const [t2DataInicio, setT2DataInicio] = useState('');
   const [t2DataFim, setT2DataFim] = useState('');
 
-  // Filtros Tab 3
   const [t3Busca, setT3Busca] = useState('');
   const [t3SemAluguel, setT3SemAluguel] = useState('');
 
-  // Filtros Tab 4
   const [t4CategoriaId, setT4CategoriaId] = useState('');
   const [t4FabricanteId, setT4FabricanteId] = useState('');
   const [t4Disponivel, setT4Disponivel] = useState('');
   const [t4NuncaAlugados, setT4NuncaAlugados] = useState('');
 
-  // Filtros Tab 5
   const [t5Nome, setT5Nome] = useState('');
   const [t5Pais, setT5Pais] = useState('');
 
@@ -112,43 +105,63 @@ export function ConsultasPage() {
       .catch(() => {});
   }, []);
 
-  async function runQuery(tab: TabId) {
+  const executeQuery = useCallback(async (tab: TabId, clearFilters = false) => {
     setLoading(true);
     setError(null);
     try {
       if (tab === 'alugueis-detalhados') {
-        const data = await api.consultas.alugueisDetalhados({
-          clienteNome: t1Cliente.trim(),
-          modelo: t1Modelo.trim(),
-          fabricanteNome: t1Fabricante.trim(),
-          status: t1Status,
-        });
+        const data = await api.consultas.alugueisDetalhados(
+          clearFilters
+            ? undefined
+            : {
+                clienteNome: t1Cliente.trim(),
+                modelo: t1Modelo.trim(),
+                fabricanteNome: t1Fabricante.trim(),
+                status: t1Status,
+              }
+        );
         setAlugueis(data);
       } else if (tab === 'faturamento-categoria') {
-        const data = await api.consultas.faturamentoPorCategoria({
-          dataInicio: t2DataInicio ? `${t2DataInicio}T00:00:00` : undefined,
-          dataFim: t2DataFim ? `${t2DataFim}T23:59:59` : undefined,
-        });
+        const data = await api.consultas.faturamentoPorCategoria(
+          clearFilters
+            ? undefined
+            : {
+                dataInicio: t2DataInicio ? `${t2DataInicio}T00:00:00` : undefined,
+                dataFim: t2DataFim ? `${t2DataFim}T23:59:59` : undefined,
+              }
+        );
         setFaturamento(data);
       } else if (tab === 'clientes-resumo') {
-        const data = await api.consultas.clientesResumoLocacoes({
-          termoBusca: t3Busca.trim(),
-          apenasSemAluguel: t3SemAluguel || undefined,
-        });
+        const data = await api.consultas.clientesResumoLocacoes(
+          clearFilters
+            ? undefined
+            : {
+                termoBusca: t3Busca.trim(),
+                apenasSemAluguel: t3SemAluguel || undefined,
+              }
+        );
         setClientesResumo(data);
       } else if (tab === 'veiculos-utilizacao') {
-        const data = await api.consultas.veiculosUtilizacao({
-          categoriaId: t4CategoriaId,
-          fabricanteId: t4FabricanteId,
-          disponivel: t4Disponivel,
-          apenasNuncaAlugados: t4NuncaAlugados,
-        });
+        const data = await api.consultas.veiculosUtilizacao(
+          clearFilters
+            ? undefined
+            : {
+                categoriaId: t4CategoriaId,
+                fabricanteId: t4FabricanteId,
+                disponivel: t4Disponivel,
+                apenasNuncaAlugados: t4NuncaAlugados,
+              }
+        );
         setVeiculosUtilizacao(data);
       } else if (tab === 'fabricantes-desempenho') {
-        const data = await api.consultas.fabricantesDesempenho({
-          nome: t5Nome.trim(),
-          paisOrigem: t5Pais.trim(),
-        });
+        const data = await api.consultas.fabricantesDesempenho(
+          clearFilters
+            ? undefined
+            : {
+                nome: t5Nome.trim(),
+                paisOrigem: t5Pais.trim(),
+              }
+        );
         setFabricantesDesempenho(data);
       }
     } catch (err) {
@@ -156,32 +169,45 @@ export function ConsultasPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [
+    t1Cliente,
+    t1Modelo,
+    t1Fabricante,
+    t1Status,
+    t2DataInicio,
+    t2DataFim,
+    t3Busca,
+    t3SemAluguel,
+    t4CategoriaId,
+    t4FabricanteId,
+    t4Disponivel,
+    t4NuncaAlugados,
+    t5Nome,
+    t5Pais,
+  ]);
 
   useEffect(() => {
-    void runQuery(activeTab);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    void executeQuery(activeTab);
   }, [activeTab]);
 
   const currentTabMeta = TABS.find((t) => t.id === activeTab)!;
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    void runQuery(activeTab);
+    void executeQuery(activeTab);
   }
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-          Central de Consultas &amp; Relatórios SQL
+          Consultas e Relatórios
         </h1>
         <p className="mt-1 text-sm text-slate-500">
-          Consumo direto das 5 rotas analíticas de <code>/api/consultas</code> construídas com INNER JOIN e LEFT OUTER JOIN no Trabalho Prático 1.
+          Relatórios gerenciais com filtros personalizados utilizando consultas INNER JOIN e LEFT OUTER JOIN.
         </p>
       </div>
 
-      {/* Tabs */}
       <div className="flex flex-wrap gap-2">
         {TABS.map((tab) => (
           <button
@@ -199,7 +225,6 @@ export function ConsultasPage() {
         ))}
       </div>
 
-      {/* Metadados da Rota e JOIN */}
       <div className="flex flex-col gap-1 rounded-2xl border border-blue-200 bg-blue-50/70 px-4 py-3 text-xs text-blue-950 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2 font-mono font-semibold text-blue-800">
           <Database className="h-4 w-4 shrink-0" />
@@ -210,7 +235,6 @@ export function ConsultasPage() {
 
       {error && <Alert type="error" message={error} onClose={() => setError(null)} />}
 
-      {/* TAB 1: ALUGUEIS DETALHADOS */}
       {activeTab === 'alugueis-detalhados' && (
         <div className="space-y-4">
           <form
@@ -262,9 +286,10 @@ export function ConsultasPage() {
                   setT1Modelo('');
                   setT1Fabricante('');
                   setT1Status('');
-                  void api.consultas.alugueisDetalhados().then(setAlugueis);
+                  void executeQuery('alugueis-detalhados', true);
                 }}
                 className="rounded-xl border border-slate-200 px-3 py-2 text-slate-600 hover:bg-slate-50"
+                title="Limpar filtros"
               >
                 <RotateCcw className="h-4 w-4" />
               </button>
@@ -280,7 +305,7 @@ export function ConsultasPage() {
                     <th className="px-4 py-3">Cliente</th>
                     <th className="px-4 py-3">Veículo</th>
                     <th className="px-4 py-3">Marca / Categoria</th>
-                    <th className="px-4 py-3">Início → Prev.</th>
+                    <th className="px-4 py-3">Período</th>
                     <th className="px-4 py-3">Valor Total</th>
                     <th className="px-4 py-3">Status</th>
                   </tr>
@@ -302,8 +327,8 @@ export function ConsultasPage() {
                           <div className="font-medium text-slate-900">{a.veiculoModelo}</div>
                           <div className="font-mono text-xs text-slate-500">{a.veiculoPlaca}</div>
                         </td>
-                        <td className="px-4 py-3 text-slate-600">{a.fabricanteNome} • {a.categoriaNome}</td>
-                        <td className="px-4 py-3 text-xs text-slate-600">{formatDate(a.dataInicio)} → {formatDate(a.dataFimPrevista)}</td>
+                        <td className="px-4 py-3 text-slate-600">{a.fabricanteNome} / {a.categoriaNome}</td>
+                        <td className="px-4 py-3 text-xs text-slate-600">{formatDate(a.dataInicio)} a {formatDate(a.dataFimPrevista)}</td>
                         <td className="px-4 py-3 font-semibold text-slate-900">{formatCurrency(a.valorTotal)}</td>
                         <td className="px-4 py-3"><StatusBadge status={a.status} /></td>
                       </tr>
@@ -316,7 +341,6 @@ export function ConsultasPage() {
         </div>
       )}
 
-      {/* TAB 2: FATURAMENTO POR CATEGORIA */}
       {activeTab === 'faturamento-categoria' && (
         <div className="space-y-4">
           <form
@@ -353,9 +377,10 @@ export function ConsultasPage() {
                 onClick={() => {
                   setT2DataInicio('');
                   setT2DataFim('');
-                  void api.consultas.faturamentoPorCategoria().then(setFaturamento);
+                  void executeQuery('faturamento-categoria', true);
                 }}
                 className="rounded-xl border border-slate-200 px-3 py-2 text-slate-600 hover:bg-slate-50"
+                title="Limpar filtros"
               >
                 <RotateCcw className="h-4 w-4" />
               </button>
@@ -417,7 +442,6 @@ export function ConsultasPage() {
         </div>
       )}
 
-      {/* TAB 3: RESUMO DE CLIENTES (LEFT JOIN) */}
       {activeTab === 'clientes-resumo' && (
         <div className="space-y-4">
           <form
@@ -436,7 +460,7 @@ export function ConsultasPage() {
               onChange={(e) => setT3SemAluguel(e.target.value)}
               className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
             >
-              <option value="">Todos os clientes (LEFT JOIN)</option>
+              <option value="">Todos os clientes</option>
               <option value="true">Apenas clientes sem locações</option>
               <option value="false">Apenas clientes com locações</option>
             </select>
@@ -452,9 +476,10 @@ export function ConsultasPage() {
                 onClick={() => {
                   setT3Busca('');
                   setT3SemAluguel('');
-                  void api.consultas.clientesResumoLocacoes().then(setClientesResumo);
+                  void executeQuery('clientes-resumo', true);
                 }}
                 className="rounded-xl border border-slate-200 px-3 py-2 text-slate-600 hover:bg-slate-50"
+                title="Limpar filtros"
               >
                 <RotateCcw className="h-4 w-4" />
               </button>
@@ -501,7 +526,6 @@ export function ConsultasPage() {
         </div>
       )}
 
-      {/* TAB 4: UTILIZACAO DE VEICULOS */}
       {activeTab === 'veiculos-utilizacao' && (
         <div className="space-y-4">
           <form
@@ -564,9 +588,10 @@ export function ConsultasPage() {
                   setT4FabricanteId('');
                   setT4Disponivel('');
                   setT4NuncaAlugados('');
-                  void api.consultas.veiculosUtilizacao().then(setVeiculosUtilizacao);
+                  void executeQuery('veiculos-utilizacao', true);
                 }}
                 className="rounded-xl border border-slate-200 px-3 py-2 text-slate-600 hover:bg-slate-50"
+                title="Limpar filtros"
               >
                 <RotateCcw className="h-4 w-4" />
               </button>
@@ -599,7 +624,7 @@ export function ConsultasPage() {
                           <div className="font-semibold text-slate-900">{v.modelo} ({v.anoFabricacao})</div>
                           <div className="font-mono text-xs text-slate-500">{v.placa}</div>
                         </td>
-                        <td className="px-4 py-3 text-slate-600">{v.fabricante} • {v.categoria}</td>
+                        <td className="px-4 py-3 text-slate-600">{v.fabricante} / {v.categoria}</td>
                         <td className="px-4 py-3 text-slate-600">{formatNumber(v.quilometragemAtual, 'km')}</td>
                         <td className="px-4 py-3 font-medium text-slate-900">{v.totalLocacoes}</td>
                         <td className="px-4 py-3 text-slate-600">{formatNumber(v.quilometragemTotalRodada ?? 0, 'km')}</td>
@@ -615,7 +640,6 @@ export function ConsultasPage() {
         </div>
       )}
 
-      {/* TAB 5: DESEMPENHO POR FABRICANTE */}
       {activeTab === 'fabricantes-desempenho' && (
         <div className="space-y-4">
           <form
@@ -648,9 +672,10 @@ export function ConsultasPage() {
                 onClick={() => {
                   setT5Nome('');
                   setT5Pais('');
-                  void api.consultas.fabricantesDesempenho().then(setFabricantesDesempenho);
+                  void executeQuery('fabricantes-desempenho', true);
                 }}
                 className="rounded-xl border border-slate-200 px-3 py-2 text-slate-600 hover:bg-slate-50"
+                title="Limpar filtros"
               >
                 <RotateCcw className="h-4 w-4" />
               </button>
@@ -660,7 +685,7 @@ export function ConsultasPage() {
           {fabricantesDesempenho.length > 0 && (
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
               <h3 className="mb-3 text-sm font-semibold text-slate-900">
-                Receita Acumulada por Fabricante (Múltiplo LEFT JOIN)
+                Receita Acumulada por Fabricante
               </h3>
               <div className="h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
@@ -697,7 +722,7 @@ export function ConsultasPage() {
                     fabricantesDesempenho.map((f) => (
                       <tr key={f.fabricanteId} className="hover:bg-slate-50">
                         <td className="px-4 py-3 font-semibold text-slate-900">{f.nomeFabricante}</td>
-                        <td className="px-4 py-3 text-slate-600">{f.paisOrigem || '—'}</td>
+                        <td className="px-4 py-3 text-slate-600">{f.paisOrigem || '-'}</td>
                         <td className="px-4 py-3 font-medium text-slate-900">{f.totalVeiculosCadastrados}</td>
                         <td className="px-4 py-3 font-medium text-slate-900">{f.totalLocacoesRealizadas}</td>
                         <td className="px-4 py-3 font-bold text-emerald-700">{formatCurrency(f.totalReceitaGerada)}</td>

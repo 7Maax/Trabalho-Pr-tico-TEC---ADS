@@ -11,11 +11,9 @@ export function FabricantesPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  // Filtros personalizados (2 campos: nome e paisOrigem)
   const [filtroNome, setFiltroNome] = useState('');
   const [filtroPais, setFiltroPais] = useState('');
 
-  // Modal Criar / Editar
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Fabricante | null>(null);
   const [nome, setNome] = useState('');
@@ -105,7 +103,7 @@ export function FabricantesPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">Fabricantes</h1>
           <p className="mt-1 text-sm text-slate-500">
-            Cadastro, edição, exclusão e pesquisa por nome e país de origem.
+            Cadastro e consulta de montadoras por nome e país de origem.
           </p>
         </div>
         <button
@@ -121,7 +119,6 @@ export function FabricantesPage() {
       {error && <Alert type="error" message={error} onClose={() => setError(null)} />}
       {success && <Alert type="success" message={success} onClose={() => setSuccess(null)} />}
 
-      {/* Barra de Filtros */}
       <form
         onSubmit={handleFilter}
         className="grid grid-cols-1 gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-xs sm:grid-cols-3"
@@ -171,7 +168,6 @@ export function FabricantesPage() {
         </div>
       </form>
 
-      {/* Tabela */}
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
@@ -201,7 +197,7 @@ export function FabricantesPage() {
                   <tr key={item.id} className="hover:bg-slate-50/80">
                     <td className="px-5 py-3.5 font-mono text-xs text-slate-500">#{item.id}</td>
                     <td className="px-5 py-3.5 font-semibold text-slate-900">{item.nome}</td>
-                    <td className="px-5 py-3.5 text-slate-600">{item.paisOrigem || '—'}</td>
+                    <td className="px-5 py-3.5 text-slate-600">{item.paisOrigem || '-'}</td>
                     <td className="px-5 py-3.5 text-right">
                       <div className="inline-flex items-center gap-1.5">
                         <button
@@ -233,7 +229,7 @@ export function FabricantesPage() {
       <Modal
         open={modalOpen}
         title={editing ? 'Editar Fabricante' : 'Novo Fabricante'}
-        subtitle="Preencha os dados da montadora."
+        subtitle="Informe os dados da montadora."
         onClose={() => setModalOpen(false)}
       >
         <form onSubmit={handleSubmit} className="space-y-4">

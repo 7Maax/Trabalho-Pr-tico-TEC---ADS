@@ -68,7 +68,8 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   }
 
   const contentType = response.headers.get('content-type') || '';
-  const isJson = contentType.includes('application/json') || contentType.includes('application/problem+json');
+  const isJson =
+    contentType.includes('application/json') || contentType.includes('application/problem+json');
   const body = isJson ? await response.json().catch(() => null) : await response.text().catch(() => '');
 
   if (!response.ok) {
@@ -106,7 +107,6 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 }
 
 export const api = {
-  // Fabricantes
   fabricantes: {
     list: (filters?: { nome?: string; paisOrigem?: string }) =>
       request<Fabricante[]>(`/fabricantes${buildQuery(filters)}`),
@@ -118,7 +118,6 @@ export const api = {
     delete: (id: number) => request<void>(`/fabricantes/${id}`, { method: 'DELETE' }),
   },
 
-  // Categorias
   categorias: {
     list: (filters?: { nome?: string; valorMin?: string | number; valorMax?: string | number }) =>
       request<Categoria[]>(`/categorias${buildQuery(filters)}`),
@@ -130,7 +129,6 @@ export const api = {
     delete: (id: number) => request<void>(`/categorias/${id}`, { method: 'DELETE' }),
   },
 
-  // Veículos
   veiculos: {
     list: (filters?: {
       modelo?: string;
@@ -148,7 +146,6 @@ export const api = {
     delete: (id: number) => request<void>(`/veiculos/${id}`, { method: 'DELETE' }),
   },
 
-  // Clientes
   clientes: {
     list: (filters?: { nome?: string; cpf?: string; email?: string }) =>
       request<Cliente[]>(`/clientes${buildQuery(filters)}`),
@@ -160,7 +157,6 @@ export const api = {
     delete: (id: number) => request<void>(`/clientes/${id}`, { method: 'DELETE' }),
   },
 
-  // Aluguéis
   alugueis: {
     list: (filters?: { status?: string; clienteId?: number; veiculoId?: number }) =>
       request<Aluguel[]>(`/alugueis${buildQuery(filters)}`),
@@ -173,7 +169,6 @@ export const api = {
     cancelar: (id: number) => request<void>(`/alugueis/${id}`, { method: 'DELETE' }),
   },
 
-  // Consultas e Filtros com INNER / LEFT JOIN
   consultas: {
     alugueisDetalhados: (filters?: {
       clienteNome?: string;
