@@ -1,48 +1,41 @@
-# Sistema de Aluguel de Veículos (`LocadoraVeiculos`)
+# Sistema de Aluguel de Veículos (LocadoraVeiculos)
 
-Projeto full-stack desenvolvido para a disciplina **Tecnologias para Análise e Desenvolvimento de Sistemas**, integrando o **Back-end RESTful (Trabalho Prático 1)** com o **Front-end Web (Trabalho Prático 2)**.
+Sistema desenvolvido para a disciplina **Tecnologias para Análise e Desenvolvimento de Sistemas**, integrando a API RESTful do Trabalho Prático 1 com o front-end web do Trabalho Prático 2.
 
----
-
-## Estrutura do Repositório
+## Estrutura do Projeto
 
 ```text
 ├── LocadoraVeiculos.API/       # Back-end ASP.NET Core (.NET 9) + EF Core + SQL Server
-├── LocadoraVeiculos.Web/       # Front-end React + Vite + TypeScript + Tailwind CSS + Recharts
+├── LocadoraVeiculos.Web/       # Front-end React + Vite + TypeScript + Tailwind CSS
 ├── Docs/
-│   ├── WIREFRAMES_GUIA.md      # Especificação de Design System e telas para Figma
-│   ├── wireframe_prototipo.html# Protótipo navegável local (tons de cinza e colorido)
-│   ├── artigo_sbc.tex          # Artigo científico pronto no template SBC (Overleaf/LaTeX)
-│   └── ROTEIRO_PITCH.md        # Roteiro cronometrado do vídeo pitch (3 a 5 min)
-├── Prints/                     # Evidências do Swagger (Trabalho Prático 1)
-├── DOCUMENTACAO_APIS.md        # Especificação detalhada das rotas e modelo ER
+│   ├── WIREFRAMES_GUIA.md      # Especificação das telas para o Figma
+│   ├── wireframe_prototipo.html# Protótipo navegável local
+│   ├── artigo_sbc.tex          # Artigo no modelo SBC (LaTeX/Overleaf)
+│   └── ROTEIRO_PITCH.md        # Roteiro do vídeo de apresentação
+├── Prints/                     # Capturas de tela da Etapa 1
+├── DOCUMENTACAO_APIS.md        # Documentação das rotas e diagrama ER
 └── LocadoraVeiculos.sln
 ```
 
----
+## Requisitos
 
-## Pré-requisitos
+- .NET 9 SDK
+- SQL Server Express ou LocalDB (`(localdb)\mssqllocaldb`)
+- Node.js 20+ e npm
 
-- [.NET 9 SDK](https://dotnet.microsoft.com/)
-- Microsoft SQL Server Express ou LocalDB (`(localdb)\mssqllocaldb`)
-- [Node.js 20+](https://nodejs.org/) e npm
+## Execução Local
 
----
+### 1. Back-end (`LocadoraVeiculos.API`)
 
-## Como Executar o Projeto
-
-### 1. Iniciar o Back-end (`LocadoraVeiculos.API`)
-
-Na raiz do repositório:
+Na raiz do projeto:
 
 ```powershell
 dotnet run --project LocadoraVeiculos.API
 ```
 
-- A API inicia em **`http://localhost:5205`** (Swagger UI disponível na raiz).
-- As migrations do Entity Framework Core e o *Seed Data* de Fabricantes e Categorias são aplicados automaticamente ao iniciar.
+A API será iniciada em `http://localhost:5205` (com Swagger na raiz) e aplicará automaticamente as migrations e os dados iniciais de Fabricantes e Categorias.
 
-### 2. Iniciar o Front-end (`LocadoraVeiculos.Web`)
+### 2. Front-end (`LocadoraVeiculos.Web`)
 
 Em outro terminal:
 
@@ -52,18 +45,14 @@ npm install
 npm run dev
 ```
 
-- A aplicação web ficará disponível em **`http://localhost:5173`**.
-- Por padrão, o front-end consome `http://localhost:5205/api` (personalizável via variável `VITE_API_URL`).
+A interface ficará disponível em `http://localhost:5173`, consumindo `http://localhost:5205/api` (ou a URL definida em `VITE_API_URL`).
 
----
+## Funcionalidades do Front-end
 
-## Funcionalidades Implementadas no Front-end
-
-- **Dashboard:** KPIs em tempo real (frota total, disponíveis, locações ativas, clientes e faturamento) + gráficos de Faturamento por Categoria e Desempenho por Fabricante.
-- **CRUD Completo + Filtros Personalizados ($\ge$ 2 campos por entidade):**
-  - **Fabricantes:** filtros por *Nome* e *País de Origem*.
-  - **Categorias:** filtros por *Nome/Descrição*, *Diária Mínima* e *Diária Máxima*.
-  - **Veículos:** filtros por *Modelo*, *Placa*, *Fabricante*, *Categoria*, *Disponibilidade* + atalho *Apenas Disponíveis* (`/api/veiculos/disponiveis`).
-  - **Clientes:** filtros por *Nome*, *CPF* e *E-mail* + modal de *Histórico de Locações* (`/api/alugueis/cliente/{clienteId}`).
-  - **Aluguéis:** filtros por *Cliente*, *Modelo*, *Fabricante*, *Status* e *Período* + *Nova Locação*, *Registrar Devolução* (cálculo automático e liberação do veículo) e *Cancelamento*.
-- **Central de Consultas & JOINs (`/consultas`):** Interface interativa para todas as 5 rotas analíticas de `/api/consultas/*` (`INNER JOIN` e `LEFT OUTER JOIN`), exibindo rota HTTP, tipo de junção SQL, filtros dinâmicos, gráficos e tabelas.
+- **Dashboard:** resumo de veículos, locações ativas, clientes, faturamento concluído e gráficos por categoria e fabricante.
+- **Fabricantes:** cadastro, edição, exclusão e filtros por nome e país de origem.
+- **Categorias:** cadastro, edição, exclusão e filtros por nome/descrição e faixa de valor da diária.
+- **Veículos:** cadastro, edição, exclusão, atalho para disponíveis e filtros por modelo, placa, fabricante, categoria e disponibilidade.
+- **Clientes:** cadastro, edição, exclusão, filtros por nome, CPF e e-mail e consulta de histórico de locações.
+- **Aluguéis:** filtros combinados (cliente, modelo, fabricante, status e datas), abertura de locação, registro de devolução e cancelamento.
+- **Consultas:** visualização tabular e gráfica das cinco rotas de `/api/consultas` com `INNER JOIN` e `LEFT OUTER JOIN`.

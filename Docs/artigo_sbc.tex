@@ -9,11 +9,11 @@
 
 \sloppy
 
-\title{Sistema Integrado de Gestão para Locadora de Veículos: Front-end Web Conectado à API RESTful e Banco de Dados Relacional}
+\title{Front-end Web Integrado à API RESTful e Banco de Dados Relacional para Gestão de Locadora de Veículos}
 
 \author{Gabriel [Sobrenome]\inst{1}}
 
-\address{Curso de Análise e Desenvolvimento de Sistemas -- Disciplina de Tecnologias para Análise e Desenvolvimento de Sistemas\\
+\address{Curso de Análise e Desenvolvimento de Sistemas -- Tecnologias para Análise e Desenvolvimento de Sistemas\\
   [Nome da Instituição] -- [Cidade/UF] -- Brasil
   \email{seu.email@instituicao.edu.br}
 }
@@ -23,109 +23,85 @@
 \maketitle
 
 \begin{abstract}
-  This paper presents the design, prototyping, and implementation of a web front-end application integrated with the RESTful API and relational database developed in the first stage of the Vehicle Rental System (\textit{LocadoraVeiculos}). Built with React, TypeScript, Vite, and Tailwind CSS, the application consumes all CRUD endpoints and analytical routes using \texttt{INNER JOIN} and \texttt{LEFT OUTER JOIN} queries executed against Microsoft SQL Server via ASP.NET Core (.NET 9) and Entity Framework Core. The results demonstrate full operational integration without static or mocked data, supporting custom multi-field filtering across all entities and real-time visualization of business metrics.
+  This paper describes the prototyping and development of a web front-end application integrated with the RESTful API and relational database created in the first part of the Vehicle Rental System (\textit{LocadoraVeiculos}). Built with React, TypeScript, Vite, and Tailwind CSS, the application consumes all CRUD endpoints and analytical routes based on \texttt{INNER JOIN} and \texttt{LEFT OUTER JOIN} queries executed in Microsoft SQL Server via ASP.NET Core (.NET 9) and Entity Framework Core. All screens operate with live database records, supporting multi-field filtering for each entity and visual reports.
 \end{abstract}
 
 \begin{resumo}
-  Este artigo apresenta o projeto, a prototipação e a implementação de uma aplicação front-end web integrada à API RESTful e ao banco de dados relacional desenvolvidos na primeira etapa do Sistema de Aluguel de Veículos (\textit{LocadoraVeiculos}). Construído com React, TypeScript, Vite e Tailwind CSS, o front-end consome todos os endpoints CRUD e as rotas analíticas com consultas \texttt{INNER JOIN} e \texttt{LEFT OUTER JOIN} executadas no Microsoft SQL Server por meio do ASP.NET Core (.NET 9) e Entity Framework Core. Os resultados comprovam a integração completa ponta a ponta sem dados estáticos ou mocados, contemplando filtros personalizados em múltiplos campos por entidade e visualizações gerenciais em tempo real.
+  Este artigo apresenta a prototipação e o desenvolvimento de uma aplicação front-end web integrada à API RESTful e ao banco de dados relacional construídos na primeira parte do Sistema de Aluguel de Veículos (\textit{LocadoraVeiculos}). Desenvolvido com React, TypeScript, Vite e Tailwind CSS, o front-end consome todas as rotas CRUD e as consultas com \texttt{INNER JOIN} e \texttt{LEFT OUTER JOIN} executadas no Microsoft SQL Server por meio do ASP.NET Core (.NET 9) e Entity Framework Core. Todas as telas operam com dados reais do banco, oferecendo filtros em múltiplos campos por entidade e relatórios visuais.
 \end{resumo}
 
 \section{Introdução}
 
-O gerenciamento de frotas e contratos de locação de veículos exige controle rigoroso sobre a disponibilidade de automóveis, integridade cadastral de clientes, cálculo preciso de diárias e rastreabilidade financeira por categoria e fabricante. Sistemas desconectados ou planilhas manuais favorecem erros de dupla reserva, perda de histórico de quilometragem e baixa visibilidade gerencial.
+O controle de locação de veículos envolve o acompanhamento simultâneo da disponibilidade da frota, do cadastro de clientes, da vigência de contratos e do cálculo de valores na devolução. Quando realizado sem integração entre interface e banco de dados, o processo fica sujeito a reservas duplicadas, inconsistências de quilometragem e dificuldade na análise de faturamento.
 
-Na primeira parte deste trabalho (Trabalho Prático 1), foi modelado e implementado o back-end \texttt{LocadoraVeiculos.API} em C\# (.NET 9), utilizando ASP.NET Core Web API, Entity Framework Core (abordagem \textit{Code-First}) e Microsoft SQL Server, expondo operações CRUD para cinco entidades relacionadas e cinco rotas analíticas com junções relacionais (\texttt{INNER JOIN} e \texttt{LEFT OUTER JOIN}).
+Na primeira parte deste projeto (Trabalho Prático 1), foi desenvolvido o back-end \texttt{LocadoraVeiculos.API} em C\# (.NET 9), usando ASP.NET Core Web API, Entity Framework Core (Code-First) e Microsoft SQL Server. A API disponibilizou operações CRUD para cinco entidades e cinco rotas de consulta usando junções relacionais (\texttt{INNER JOIN} e \texttt{LEFT OUTER JOIN}).
 
-O objetivo desta segunda etapa (Trabalho Prático 2) é projetar e desenvolver o front-end web (\texttt{LocadoraVeiculos.Web}) totalmente integrado ao back-end existente, cobrindo: (i) prototipação por meio de wireframes de média/alta fidelidade; (ii) interfaces completas de cadastro, edição, exclusão e pesquisa com pelo menos dois filtros personalizados por entidade; e (iii) painéis e visualizações analíticas alimentados pelas rotas de consulta criadas anteriormente.
+Nesta segunda etapa (Trabalho Prático 2), foi desenvolvido o front-end \texttt{LocadoraVeiculos.Web}, conectado diretamente ao back-end anterior. O trabalho abrange a criação de wireframes, a implementação de telas de cadastro, edição, exclusão e pesquisa com pelo menos dois filtros por entidade, além da visualização gráfica e tabular das consultas relacionais.
 
-\section{Arquitetura e Modelagem Adotada}
+\section{Modelagem e Arquitetura}
 
-A solução segue uma arquitetura desacoplada cliente-servidor orientada a serviços RESTful:
-
-\begin{itemize}
-  \item \textbf{Banco de Dados Relacional (SQL Server / LocalDB):} composto por cinco tabelas principais -- \texttt{Fabricantes}, \texttt{Categorias}, \texttt{Veiculos}, \texttt{Clientes} e \texttt{Alugueis} -- com restrições de integridade referencial (\texttt{OnDelete: Restrict}) e índices únicos em \texttt{Fabricantes.Nome}, \texttt{Categorias.Nome}, \texttt{Veiculos.Placa}, \texttt{Clientes.CPF} e \texttt{Clientes.Email}.
-  \item \textbf{Back-end (\texttt{LocadoraVeiculos.API}):} API RESTful em ASP.NET Core (.NET 9) estruturada em \textit{Models}, \textit{Data}, \textit{DTOs}, \textit{Controllers} e \textit{ExceptionMiddleware}. Para suportar a comunicação direta com o navegador e os filtros por entidade, foram habilitados cabeçalhos CORS em \texttt{Program.cs} e parâmetros opcionais de consulta (\texttt{[FromQuery]}) nos endpoints \texttt{GET}, preservando integralmente os contratos da etapa anterior.
-  \item \textbf{Front-end (\texttt{LocadoraVeiculos.Web}):} aplicação \textit{Single Page Application} (SPA) em React 18, TypeScript, Vite e Tailwind CSS, com roteamento via \texttt{react-router-dom}, gráficos interativos em \texttt{Recharts} e camada centralizada de comunicação HTTP (\texttt{src/services/api.ts}) responsável por tratar respostas JSON e códigos de erro HTTP (\texttt{400}, \texttt{404}, \texttt{409} e \texttt{500}).
-\end{itemize}
-
-\section{Prototipação e Wireframes}
-
-Para orientar o desenvolvimento das interfaces e garantir consistência visual e ergonômica, foram elaborados wireframes de média/alta fidelidade contemplando as sete telas principais da aplicação: \textit{Dashboard}, \textit{Fabricantes}, \textit{Categorias}, \textit{Veículos}, \textit{Clientes}, \textit{Aluguéis} e \textit{Central de Consultas e Relatórios}, além dos modais de cadastro, edição, histórico e devolução.
+O sistema segue o modelo cliente-servidor com comunicação HTTP/JSON:
 
 \begin{itemize}
-  \item \textbf{Link público dos wireframes (Figma):} \url{https://www.figma.com/file/INSIRA-SEU-LINK-AQUI}
-  \item \textbf{Guia e protótipo local de referência:} disponibilizados no repositório em \texttt{Docs/WIREFRAMES\_GUIA.md} e \texttt{Docs/wireframe\_prototipo.html}.
+  \item \textbf{Banco de Dados (SQL Server / LocalDB):} formado pelas tabelas \texttt{Fabricantes}, \texttt{Categorias}, \texttt{Veiculos}, \texttt{Clientes} e \texttt{Alugueis}, com chaves estrangeiras configuradas com \texttt{OnDelete: Restrict} e restrições de unicidade para nome de fabricante, nome de categoria, placa, CPF e e-mail.
+  \item \textbf{Back-end (\texttt{LocadoraVeiculos.API}):} API em ASP.NET Core (.NET 9) organizada em \textit{Models}, \textit{Data}, \textit{DTOs}, \textit{Controllers} e \textit{ExceptionMiddleware}. Para integração com o navegador e suporte aos filtros de pesquisa, foi configurada política de CORS em \texttt{Program.cs} e foram adicionados parâmetros opcionais (\texttt{[FromQuery]}) nos métodos \texttt{GET} dos controladores CRUD, mantendo compatibilidade com as rotas da etapa anterior.
+  \item \textbf{Front-end (\texttt{LocadoraVeiculos.Web}):} aplicação em React 18, TypeScript, Vite e Tailwind CSS, utilizando \texttt{react-router-dom} para navegação, \texttt{Recharts} para gráficos e um módulo centralizado (\texttt{src/services/api.ts}) para requisições HTTP e tratamento de respostas de erro (\texttt{400}, \texttt{404}, \texttt{409} e \texttt{500}).
 \end{itemize}
 
-% Descomente o bloco abaixo apos exportar a imagem do Figma para o Overleaf:
-% \begin{figure}[ht]
-% \centering
-% \includegraphics[width=.92\textwidth]{wireframe_dashboard.png}
-% \caption{Wireframe de média/alta fidelidade da tela de Dashboard e navegação lateral.}
-% \label{fig:wireframe}
-% \end{figure}
+\section{Wireframes}
 
-\section{Implementação das Funcionalidades e Integração com a API}
+Antes da implementação das telas, foram elaborados wireframes de média/alta fidelidade definindo o menu lateral fixo, os cards de indicadores, as barras de filtro, as tabelas de listagem e os modais de cadastro, edição, histórico e devolução, cobrindo as sete telas principais: \textit{Dashboard}, \textit{Fabricantes}, \textit{Categorias}, \textit{Veículos}, \textit{Clientes}, \textit{Aluguéis} e \textit{Consultas}.
 
-Todas as telas foram implementadas consumindo dados reais da API sem utilização de dados estáticos ou mocados. A Tabela~\ref{tab:rotas} sintetiza o mapeamento entre as entidades, as rotas consumidas da Etapa 3 e os filtros personalizados disponibilizados ao usuário.
+\begin{itemize}
+  \item \textbf{Link dos wireframes no Figma:} \url{https://www.figma.com/file/INSIRA-SEU-LINK-AQUI}
+  \item \textbf{Referência local no repositório:} \texttt{Docs/WIREFRAMES\_GUIA.md} e \texttt{Docs/wireframe\_prototipo.html}.
+\end{itemize}
+
+\section{Implementação e Integração Front-end e API}
+
+Cada módulo da aplicação comunica-se diretamente com as rotas criadas na API, sem dados fixos no cliente. A Tabela~\ref{tab:rotas} resume as rotas utilizadas e os filtros disponíveis por entidade.
 
 \begin{table}[ht]
 \centering
-\caption{Mapeamento entre módulos do front-end, rotas RESTful e filtros personalizados.}
+\caption{Relação entre módulos do front-end, rotas da API e filtros implementados.}
 \label{tab:rotas}
 \scriptsize
 \begin{tabular}{@{}p{2.3cm}p{5.5cm}p{5.5cm}@{}}
 \toprule
-\textbf{Entidade / Módulo} & \textbf{Rotas REST Consumidas} & \textbf{Filtros Personalizados ($\ge$ 2 campos)} \\
+\textbf{Entidade} & \textbf{Rotas Consumidas} & \textbf{Filtros Personalizados} \\
 \midrule
-Fabricantes & \texttt{GET/POST/PUT/DELETE /api/fabricantes}, \texttt{GET /api/consultas/fabricantes-desempenho} & Nome do fabricante; País de origem. \\
-Categorias & \texttt{GET/POST/PUT/DELETE /api/categorias}, \texttt{GET /api/consultas/faturamento-por-categoria} & Nome/descrição; Valor mínimo da diária; Valor máximo da diária. \\
+Fabricantes & \texttt{GET/POST/PUT/DELETE /api/fabricantes}, \texttt{GET /api/consultas/fabricantes-desempenho} & Nome; País de origem. \\
+Categorias & \texttt{GET/POST/PUT/DELETE /api/categorias}, \texttt{GET /api/consultas/faturamento-por-categoria} & Nome/descrição; Diária mínima; Diária máxima. \\
 Veículos & \texttt{GET/POST/PUT/DELETE /api/veiculos}, \texttt{GET /api/veiculos/disponiveis}, \texttt{GET /api/consultas/veiculos-utilizacao} & Modelo; Placa; Fabricante; Categoria; Disponibilidade. \\
-Clientes & \texttt{GET/POST/PUT/DELETE /api/clientes}, \texttt{GET /api/alugueis/cliente/\{id\}}, \texttt{GET /api/consultas/clientes-resumo-locacoes} & Nome; CPF; E-mail; Situação de locação (com/sem aluguel). \\
-Aluguéis & \texttt{GET/POST /api/alugueis}, \texttt{PUT /api/alugueis/\{id\}/devolver}, \texttt{DELETE /api/alugueis/\{id\}}, \texttt{GET /api/consultas/alugueis-detalhados} & Nome do cliente; Modelo; Fabricante; Status; Data inicial e final. \\
+Clientes & \texttt{GET/POST/PUT/DELETE /api/clientes}, \texttt{GET /api/alugueis/cliente/\{id\}}, \texttt{GET /api/consultas/clientes-resumo-locacoes} & Nome; CPF; E-mail; Situação de locação. \\
+Aluguéis & \texttt{GET/POST /api/alugueis}, \texttt{PUT /api/alugueis/\{id\}/devolver}, \texttt{DELETE /api/alugueis/\{id\}}, \texttt{GET /api/consultas/alugueis-detalhados} & Cliente; Modelo; Fabricante; Status; Data inicial e final. \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{Regras de Negócio e Fluxo de Locação}
+\subsection{Fluxo de Locação e Validações}
 
-O módulo de Aluguéis reflete diretamente as regras de integridade implementadas no servidor: ao abrir o formulário de nova locação, o front-end consulta exclusivamente \texttt{GET /api/veiculos/disponiveis}, impedindo a escolha de veículos já locados. Ao confirmar o registro (\texttt{POST /api/alugueis}), o banco marca o veículo como indisponível. No registro de devolução (\texttt{PUT /api/alugueis/\{id\}/devolver}), o servidor valida a data e a quilometragem final, calcula o valor total de acordo com as diárias decorridas, atualiza o hodômetro e libera automaticamente o veículo na frota.
+Na abertura de uma nova locação, o formulário consulta \texttt{GET /api/veiculos/disponiveis} para exibir apenas veículos livres. Ao confirmar (\texttt{POST /api/alugueis}), o back-end altera o status do veículo para indisponível. Na devolução (\texttt{PUT /api/alugueis/\{id\}/devolver}), o servidor valida a data e a quilometragem final, calcula o valor total conforme as diárias, atualiza a quilometragem do veículo e libera o automóvel para novos contratos. Tentativas de cadastro duplicado (\texttt{409}) ou exclusão de registros com vínculos (\texttt{400}) retornam a mensagem da API diretamente em alertas na tela.
 
-\subsection{Visualização das Consultas com INNER JOIN e LEFT OUTER JOIN}
+\subsection{Consultas com INNER JOIN e LEFT OUTER JOIN}
 
-A tela \textit{Consultas \& JOINs} dedica uma aba interativa para cada uma das cinco rotas de \texttt{ConsultasController}:
+A página de Consultas reúne as cinco rotas analíticas do \texttt{ConsultasController}:
 \begin{enumerate}
-  \item \textbf{Aluguéis Detalhados:} \texttt{INNER JOIN} entre as 5 tabelas do modelo, exibindo dados completos do cliente, veículo, montadora, categoria e contrato.
-  \item \textbf{Faturamento por Categoria:} \texttt{INNER JOIN} com agrupamento (\texttt{GroupBy}, \texttt{Count}, \texttt{Sum}) e cálculo de ticket médio, renderizado em tabela e gráfico de barras comparativo.
-  \item \textbf{Resumo de Clientes:} \texttt{LEFT OUTER JOIN} entre \texttt{Clientes} e \texttt{Alugueis}, permitindo identificar tanto clientes ativos quanto clientes cadastrados que nunca realizaram locações.
-  \item \textbf{Utilização de Veículos:} combinação de \texttt{INNER JOIN} e \texttt{LEFT OUTER JOIN} calculando total de locações, quilometragem rodada em contratos e receita individual por veículo.
-  \item \textbf{Desempenho por Fabricante:} múltiplo \texttt{LEFT OUTER JOIN} (\texttt{Fabricantes} $\leftarrow$ \texttt{Veiculos} $\leftarrow$ \texttt{Alugueis}), exibindo frota por marca e receita acumulada em gráfico e tabela.
+  \item \textbf{Aluguéis Detalhados:} \texttt{INNER JOIN} entre \texttt{Alugueis}, \texttt{Clientes}, \texttt{Veiculos}, \texttt{Fabricantes} e \texttt{Categorias}.
+  \item \textbf{Faturamento por Categoria:} \texttt{INNER JOIN} com agrupamento e soma para cálculo de faturamento total e ticket médio, exibido em tabela e gráfico de barras.
+  \item \textbf{Resumo de Clientes:} \texttt{LEFT OUTER JOIN} entre \texttt{Clientes} e \texttt{Alugueis}, permitindo filtrar inclusive clientes sem nenhuma locação registrada.
+  \item \textbf{Utilização de Veículos:} junção mista (\texttt{INNER JOIN} e \texttt{LEFT OUTER JOIN}) com contagem de locações, quilometragem rodada e receita por veículo.
+  \item \textbf{Desempenho por Fabricante:} múltiplo \texttt{LEFT OUTER JOIN} entre \texttt{Fabricantes}, \texttt{Veiculos} e \texttt{Alugueis}, apresentado em gráfico e tabela.
 \end{enumerate}
 
-\section{Resultados e Validação}
+\section{Resultados}
 
-A validação foi conduzida com back-end e front-end executando localmente conectados ao SQL Server LocalDB. Foram testados: (a) criação, edição, exclusão e filtragem de registros nas cinco entidades; (b) tratamento de erros de conflito de unicidade (\texttt{409 Conflict}) e integridade referencial (\texttt{400 Bad Request}) exibidos diretamente em alertas amigáveis na interface; e (c) ciclo completo de locação e devolução refletindo instantaneamente nos gráficos do \textit{Dashboard} e da \textit{Central de Consultas}.
-
-% Descomente e adicione os prints reais das telas capturadas:
-% \begin{figure}[ht]
-% \centering
-% \includegraphics[width=.92\textwidth]{print_dashboard.png}
-% \caption{Dashboard com indicadores reais e gráficos gerados a partir das consultas SQL.}
-% \label{fig:dashboard}
-% \end{figure}
-%
-% \begin{figure}[ht]
-% \centering
-% \includegraphics[width=.92\textwidth]{print_consultas.png}
-% \caption{Central de Consultas exibindo resultados filtrados de INNER JOIN e LEFT OUTER JOIN.}
-% \label{fig:consultas}
-% \end{figure}
+Os testes foram realizados com o back-end (.NET 9) e o front-end (Vite/React) em execução local sobre o banco SQL Server LocalDB. Foi validado o ciclo completo de cadastro, edição, exclusão e filtragem das cinco entidades, o tratamento de erros de integridade e unicidade, bem como a atualização imediata dos gráficos do painel e das tabelas de consultas após o registro e a devolução de contratos.
 
 \section{Conclusão}
 
-A implementação do front-end \texttt{LocadoraVeiculos.Web} concluiu a integração ponta a ponta entre interface gráfica, API RESTful em ASP.NET Core e banco de dados relacional SQL Server. O uso de wireframes acelerou a padronização das telas, enquanto a tipagem estática em TypeScript e a centralização das chamadas HTTP garantiram aderência fiel aos DTOs e regras de negócio projetados na Parte 1. Todo o código-fonte, histórico incremental de commits e artefatos de documentação encontram-se disponíveis no repositório do GitHub: \url{https://github.com/SEU-USUARIO/SEU-REPOSITORIO}.
+Com o desenvolvimento do front-end \texttt{LocadoraVeiculos.Web}, o sistema passou a oferecer interface completa para operação e consulta dos dados modelados na Parte 1. A definição prévia dos wireframes facilitou a construção das telas e a separação entre camada de serviço HTTP e componentes garantiu aderência aos contratos da API. O código-fonte completo e o histórico de commits estão disponíveis em: \url{https://github.com/SEU-USUARIO/SEU-REPOSITORIO}.
 
 \bibliographystyle{sbc}
-% \bibliography{sbc-template}
 
 \end{document}

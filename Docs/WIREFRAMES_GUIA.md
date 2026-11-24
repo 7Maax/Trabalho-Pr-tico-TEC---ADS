@@ -1,124 +1,86 @@
-# Guia de Wireframes — Sistema de Aluguel de Veículos (`LocadoraVeiculos`)
+# Guia de Wireframes - LocadoraVeiculos
 
-Este documento serve como guia completo para montagem e compartilhamento dos **wireframes de média/alta fidelidade** no **Figma** (ou ferramenta equivalente com link público compartilhável), cumprindo o requisito do Trabalho Prático 2.
+Especificação visual das telas para montagem e compartilhamento dos wireframes de média/alta fidelidade no Figma.
 
-> **Link público do Figma:** `[INSIRA AQUI O LINK PÚBLICO DO SEU PROJETO NO FIGMA APÓS IMPORTAR/MONTAR]`
-> **Protótipo navegável local de referência:** abra `Docs/wireframe_prototipo.html` no navegador para visualizar todas as 7 telas em modo wireframe e usar como referência fiel no Figma.
+- Link do Figma: `[adicionar link público do Figma]`
+- Protótipo HTML local para referência: `Docs/wireframe_prototipo.html`
 
----
+## 1. Padrão Visual
 
-## 1. Sistema de Design (Design System)
+### Layout e Medidas (Desktop)
+- Frame Desktop: `1440 x 900 px` (grid de 12 colunas, margem `24 px`, gutter `20 px`)
+- Menu lateral esquerdo: `260 px`
+- Área de conteúdo: `1180 px` com padding interno de `24 px`
+- Modais de cadastro e edição: largura entre `520 px` e `640 px`
 
-### 1.1 Dimensões e Grid (Frames no Figma)
-- **Desktop Frame:** `1440 x 900 px` (Layout Grid: 12 colunas, margem `24 px`, gutter `20 px`)
-- **Sidebar fixa à esquerda:** `260 px` de largura
-- **Área de conteúdo principal:** `1180 px` (Topbar `64 px` + área de trabalho com padding `24 px`)
-- **Modais de CRUD:** Largura `520 px` a `640 px`, centralizado com backdrop `rgba(15, 23, 42, 0.55)`
+### Cores
+| Uso | Hex |
+| :--- | :--- |
+| Cor principal (botões e item ativo) | `#2563EB` |
+| Hover principal | `#1D4ED8` |
+| Fundo da página | `#F8FAFC` |
+| Fundo de cards, tabelas e modais | `#FFFFFF` |
+| Menu lateral | `#0F172A` |
+| Texto principal | `#0F172A` |
+| Texto secundário | `#64748B` |
+| Bordas | `#E2E8F0` |
+| Status positivo (Disponível / Concluído) | `#10B981` |
+| Status ativo (Em locação) | `#F59E0B` |
+| Status de alerta/erro (Cancelado / Excluir) | `#EF4444` |
 
-### 1.2 Paleta de Cores (Alta Fidelidade)
-| Papel | Hex | Uso |
-| :--- | :--- | :--- |
-| Primária (Brand) | `#2563EB` | Botões principais, item ativo na sidebar, destaques |
-| Primária Hover | `#1D4ED8` | Estado hover de CTAs |
-| Fundo Principal | `#F8FAFC` | Background da área de trabalho |
-| Superfície (Card) | `#FFFFFF` | Cards, tabelas, modais, barra de filtros |
-| Sidebar | `#0F172A` | Navegação lateral escura |
-| Texto Principal | `#0F172A` | Títulos e valores numéricos |
-| Texto Secundário | `#64748B` | Labels, subtítulos, metadados |
-| Borda | `#E2E8F0` | Divisórias, inputs, linhas de tabela |
-| Sucesso (Disponível / Concluído) | `#10B981` | Badges positivos e confirmações |
-| Alerta (Ativo / Em Locação) | `#F59E0B` | Badges de locação em andamento |
-| Perigo (Indisponível / Cancelado / Erro) | `#EF4444` | Exclusões, cancelamentos e alertas de erro |
+### Tipografia
+- Fonte: `Inter`
+- Título principal (H1): `24 px` Bold
+- Subtítulos e títulos de card (H2): `16 px` SemiBold
+- Texto padrão e tabelas: `14 px` Regular
+- Labels e badges: `12 px` Medium
 
-### 1.3 Tipografia
-- **Fonte:** `Inter` (disponível nativamente no Figma e Google Fonts)
-- **Título da Página (H1):** `24 px` Bold (`#0F172A`)
-- **Título de Card/Seção (H2):** `16 px` SemiBold (`#0F172A`)
-- **Texto / Células de Tabela:** `14 px` Regular (`#334155`)
-- **Labels / Badges / Legendas:** `12 px` Medium (`#64748B`)
+## 2. Telas Previstas
 
----
+### 1. Dashboard (Visão Geral)
+- Cabeçalho com título, botão de atualizar e atalho para nova locação.
+- 4 cards de resumo: Frota de Veículos (com quantidade disponível), Locações Ativas, Clientes Cadastrados e Faturamento Concluído.
+- 2 gráficos lado a lado: Faturamento por Categoria e Receita por Fabricante.
+- Tabela com os aluguéis ativos no momento.
 
-## 2. Especificação das 7 Telas do Wireframe
+### 2. Fabricantes
+- Filtros: Nome do Fabricante e País de Origem.
+- Tabela com ID, Nome, País de Origem e botões de Editar e Excluir.
+- Modal para cadastro e edição (Nome e País de Origem).
 
-### Tela 1 — Dashboard (Visão Geral)
-- **Header:** Título "Visão Geral da Locadora", subtítulo e botão CTA rápido `+ Novo Aluguel`.
-- **Linha de KPIs (4 cards):**
-  1. Frota Total (com quantidade disponível)
-  2. Aluguéis Ativos
-  3. Clientes Cadastrados
-  4. Faturamento Total Consolidado (R$)
-- **Grade de Gráficos (2 colunas):**
-  - *Esquerda:* Gráfico de Barras — **Faturamento por Categoria** (`GET /api/consultas/faturamento-por-categoria`)
-  - *Direita:* Gráfico Horizontal / Ranking — **Desempenho por Fabricante** (`GET /api/consultas/fabricantes-desempenho`)
-- **Tabela Resumida Inferior:** Últimos Aluguéis Ativos com acesso rápido para registrar devolução.
+### 3. Categorias
+- Filtros: Nome/Descrição, Diária Mínima e Diária Máxima.
+- Tabela com ID, Nome, Descrição, Valor da Diária e ações de Editar e Excluir.
+- Modal para cadastro e edição (Nome, Descrição e Valor da Diária).
 
-### Tela 2 — Gestão de Fabricantes
-- **Header:** Título "Fabricantes" + botão `+ Novo Fabricante`.
-- **Barra de Filtros (2 campos):**
-  - Input texto: **Nome do Fabricante**
-  - Input texto: **País de Origem**
-  - Botões: `Filtrar` e `Limpar`
-- **Tabela Principal:** Colunas `ID`, `Nome`, `País de Origem`, `Veículos`, `Locações`, `Receita Gerada`, `Ações (Editar / Excluir)`.
-- **Modal Criar/Editar Fabricante:** Campos `Nome*` e `País de Origem`.
+### 4. Veículos
+- Filtros: Modelo, Placa, Fabricante, Categoria e Disponibilidade, além de atalho para listar apenas disponíveis.
+- Tabela com Modelo/Ano/Cor, Placa, Fabricante, Categoria, Quilometragem, Diária, Status e ações.
+- Modal para cadastro e edição com selects de Fabricante e Categoria.
 
-### Tela 3 — Gestão de Categorias
-- **Header:** Título "Categorias" + botão `+ Nova Categoria`.
-- **Barra de Filtros (3 campos):**
-  - Input texto: **Nome ou Descrição**
-  - Input numérico: **Diária Mínima (R$)**
-  - Input numérico: **Diária Máxima (R$)**
-- **Grade de Cards / Tabela:** Nome da categoria, descrição, badge com **Valor da Diária (R$)** e ações `Editar` / `Excluir`.
-- **Modal Criar/Editar Categoria:** Campos `Nome*`, `Descrição`, `Valor da Diária (R$)*`.
+### 5. Clientes
+- Filtros: Nome, CPF e E-mail.
+- Tabela com Nome, CPF, E-mail, Telefone, CNH, Data de Nascimento e ações (Histórico, Editar e Excluir).
+- Modal de cadastro/edição e modal de histórico de locações do cliente.
 
-### Tela 4 — Gestão de Veículos
-- **Header:** Título "Frota de Veículos" + botão `+ Novo Veículo`.
-- **Barra de Filtros (5 campos):**
-  - Input texto: **Modelo**
-  - Input texto: **Placa**
-  - Select: **Fabricante**
-  - Select: **Categoria**
-  - Select/Toggle: **Disponibilidade** (`Todos`, `Apenas Disponíveis`, `Alugados`)
-- **Tabela de Veículos:** `Modelo / Ano`, `Placa`, `Cor`, `Fabricante`, `Categoria`, `Quilometragem`, `Diária`, `Badge Status (Disponível / Alugado)`, `Ações (Editar / Excluir)`.
-- **Modal Criar/Editar Veículo:** `Modelo*`, `Ano de Fabricação*`, `Placa*`, `Cor`, `Quilometragem`, `Fabricante*` (select), `Categoria*` (select).
+### 6. Aluguéis
+- Filtros: Cliente, Modelo, Fabricante, Status, Data Início e Data Fim.
+- Tabela com dados consolidados do contrato (cliente, veículo, datas, quilometragem, valores, status e ações).
+- Modal de Nova Locação (listando apenas veículos disponíveis).
+- Modal de Registrar Devolução (data de devolução e quilometragem final).
+- Ação para cancelar locação ativa.
 
-### Tela 5 — Gestão de Clientes
-- **Header:** Título "Clientes" + botão `+ Novo Cliente`.
-- **Barra de Filtros (3 campos):**
-  - Input texto: **Nome**
-  - Input texto: **CPF**
-  - Input texto: **E-mail**
-- **Tabela de Clientes:** `Nome`, `CPF`, `E-mail`, `Telefone`, `CNH`, `Data Nasc.`, `Ações (Histórico / Editar / Excluir)`.
-- **Modal Criar/Editar Cliente:** `Nome*`, `CPF*`, `E-mail*`, `Telefone`, `CNH`, `Data de Nascimento`.
-- **Modal Histórico do Cliente:** Consome `GET /api/alugueis/cliente/{clienteId}` listando todas as locações, status e valores pagos.
+### 7. Consultas e Relatórios
+- 5 abas correspondentes às consultas de `/api/consultas`:
+  1. Aluguéis Detalhados (INNER JOIN em 5 tabelas)
+  2. Faturamento por Categoria (INNER JOIN com agrupamento e gráfico)
+  3. Resumo de Clientes (LEFT OUTER JOIN com filtro para clientes sem locação)
+  4. Utilização de Veículos (INNER JOIN + LEFT OUTER JOIN)
+  5. Desempenho por Fabricante (LEFT OUTER JOIN múltiplo com gráfico)
 
-### Tela 6 — Gestão de Aluguéis
-- **Header:** Título "Gestão de Aluguéis" + botão `+ Nova Locação`.
-- **Barra de Filtros (6 campos — rota `GET /api/consultas/alugueis-detalhados`):**
-  - `Cliente` (nome)
-  - `Modelo do Veículo`
-  - `Fabricante`
-  - `Status` (`Todos`, `Ativo`, `Concluido`, `Cancelado`)
-  - `Data Início` (date)
-  - `Data Fim` (date)
-- **Tabela Detalhada (INNER JOIN de 5 tabelas):** `ID`, `Cliente (Nome/CPF)`, `Veículo (Modelo/Placa/Marca/Categoria)`, `Período`, `KM Inicial → Final`, `Diária / Total`, `Status`, `Ações (Devolver / Cancelar — quando Ativo)`.
-- **Modal Nova Locação (`POST /api/alugueis`):** Select `Cliente*`, Select `Veículo Disponível*` (`GET /api/veiculos/disponiveis`), `Data Início*`, `Data Fim Prevista*`, prévia automática de valor estimado.
-- **Modal Registrar Devolução (`PUT /api/alugueis/{id}/devolver`):** Resumo do contrato, `Data de Devolução*`, `Quilometragem Final*` (mínimo = KM inicial) e cálculo estimado do valor total.
-
-### Tela 7 — Central de Consultas e Relatórios (`/api/consultas`)
-- **Abas Interativas (5 consultas SQL com INNER/LEFT JOIN):**
-  1. **Aluguéis Detalhados** (INNER JOIN 5 tabelas)
-  2. **Faturamento por Categoria** (INNER JOIN + Agregação + Gráfico de Barras)
-  3. **Resumo de Clientes** (LEFT OUTER JOIN — filtro "Apenas sem aluguel" + busca por Nome/CPF/E-mail)
-  4. **Utilização de Veículos** (INNER + LEFT JOIN — filtros por Categoria, Fabricante, Disponibilidade e "Nunca Alugados")
-  5. **Desempenho por Fabricante** (Múltiplo LEFT JOIN — filtros por País de Origem e Nome + Gráfico)
-- **Badge técnico em cada aba:** Exibe a rota HTTP exata e o tipo de JOIN executado no banco de dados (ideal para demonstração no vídeo Pitch!).
-
----
-
-## 3. Como montar rapidamente no Figma (Passo a Passo)
-1. Acesse [figma.com](https://www.figma.com), crie um novo **Design File** chamado `LocadoraVeiculos - Wireframes TP2`.
-2. Crie 7 frames Desktop (`1440 x 900`) nomeados de `01 - Dashboard` até `07 - Consultas e Relatorios`, além de um frame `08 - Modais CRUD`.
-3. Crie um componente reutilizável para a **Sidebar** (`260 x 900`) e outro para a **Barra de Filtros** e **Tabela**, usando o protótipo `Docs/wireframe_prototipo.html` como referência visual direta.
-4. Conecte os botões do menu lateral no modo **Prototype** do Figma.
-5. Clique em **Share** → altere para **Anyone with the link can view** → copie o link e cole na seção de Wireframes do artigo SBC (`Docs/artigo_sbc.tex`) e neste documento.
+## 3. Passos para Montagem no Figma
+1. Criar um arquivo no Figma (`LocadoraVeiculos - Wireframes`).
+2. Criar 7 frames de `1440 x 900` (um para cada tela) e 1 frame para os modais.
+3. Transformar o menu lateral e a barra de filtros em componentes reutilizáveis.
+4. Ligar os itens do menu no modo Prototype.
+5. Em Share, habilitar visualização pública ("Anyone with the link can view") e colar o link na documentação.

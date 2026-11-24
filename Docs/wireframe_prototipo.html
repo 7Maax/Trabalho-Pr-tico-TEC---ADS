@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wireframe Protótipo — LocadoraVeiculos (TP2)</title>
+  <title>Wireframe - LocadoraVeiculos</title>
   <style>
     :root {
       --bg: #f1f5f9;
@@ -13,7 +13,6 @@
       --muted: #64748b;
       --accent: #2563eb;
       --sidebar: #1e293b;
-      --wire-fill: #e2e8f0;
     }
     body.grayscale {
       --accent: #475569;
@@ -53,7 +52,6 @@
     .badge { display: inline-block; padding: 3px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; background: #e2e8f0; color: #334155; }
     .badge.ok { background: #dcfce7; color: #166534; }
     .badge.warn { background: #fef3c7; color: #92400e; }
-    .badge.err { background: #fee2e2; color: #991b1b; }
     .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
     .tab { padding: 8px 14px; border: 1px solid var(--border); background: #fff; border-radius: 8px; font-size: 13px; cursor: pointer; }
     .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
@@ -62,38 +60,37 @@
 </head>
 <body>
   <aside>
-    <div class="brand">LocadoraVeiculos <small>Wireframe Referência TP2</small></div>
+    <div class="brand">LocadoraVeiculos <small>Wireframe</small></div>
     <button class="nav-btn active" onclick="show('dashboard', this)">01. Dashboard</button>
     <button class="nav-btn" onclick="show('fabricantes', this)">02. Fabricantes</button>
     <button class="nav-btn" onclick="show('categorias', this)">03. Categorias</button>
     <button class="nav-btn" onclick="show('veiculos', this)">04. Veículos</button>
     <button class="nav-btn" onclick="show('clientes', this)">05. Clientes</button>
     <button class="nav-btn" onclick="show('alugueis', this)">06. Aluguéis</button>
-    <button class="nav-btn" onclick="show('consultas', this)">07. Consultas &amp; JOINs</button>
+    <button class="nav-btn" onclick="show('consultas', this)">07. Consultas</button>
     <div class="mode-box">
       <button class="mode-toggle" onclick="document.body.classList.toggle('grayscale')">Alternar Tons de Cinza / Colorido</button>
     </div>
   </aside>
 
   <main>
-    <!-- 01 DASHBOARD -->
     <section id="dashboard" class="screen active">
       <div class="topbar">
-        <div><h1>01. Dashboard — Visão Geral</h1><p>Indicadores em tempo real consumindo /api/veiculos, /api/clientes, /api/alugueis e /api/consultas</p></div>
+        <div><h1>01. Dashboard - Visão Geral</h1><p>Resumo de veículos, clientes, locações ativas e faturamento</p></div>
         <button class="btn-primary">+ Nova Locação</button>
       </div>
       <div class="kpis">
         <div class="card"><div class="kpi-label">Frota Cadastrada</div><div class="kpi-value">12 Veículos</div></div>
         <div class="card"><div class="kpi-label">Disponíveis Agora</div><div class="kpi-value">9 Disponíveis</div></div>
         <div class="card"><div class="kpi-label">Locações Ativas</div><div class="kpi-value">3 Contratos</div></div>
-        <div class="card"><div class="kpi-label">Faturamento Consolidado</div><div class="kpi-value">R$ 14.850,00</div></div>
+        <div class="card"><div class="kpi-label">Faturamento Concluído</div><div class="kpi-value">R$ 14.850,00</div></div>
       </div>
       <div class="charts">
-        <div class="card"><strong>Faturamento por Categoria (INNER JOIN)</strong><div class="wire-chart">Gráfico de Barras<br/>GET /api/consultas/faturamento-por-categoria</div></div>
-        <div class="card"><strong>Desempenho por Fabricante (LEFT JOIN)</strong><div class="wire-chart">Gráfico Horizontal<br/>GET /api/consultas/fabricantes-desempenho</div></div>
+        <div class="card"><strong>Faturamento por Categoria</strong><div class="wire-chart">Gráfico de Barras<br/>/api/consultas/faturamento-por-categoria</div></div>
+        <div class="card"><strong>Receita por Fabricante</strong><div class="wire-chart">Gráfico Horizontal<br/>/api/consultas/fabricantes-desempenho</div></div>
       </div>
       <div class="card">
-        <strong>Aluguéis Ativos Recentes</strong>
+        <strong>Aluguéis Ativos</strong>
         <table>
           <thead><tr><th>#</th><th>Cliente</th><th>Veículo</th><th>Início</th><th>Previsão</th><th>Status</th><th>Ação</th></tr></thead>
           <tbody>
@@ -103,10 +100,9 @@
       </div>
     </section>
 
-    <!-- 02 FABRICANTES -->
     <section id="fabricantes" class="screen">
       <div class="topbar">
-        <div><h1>02. Fabricantes</h1><p>CRUD completo + Filtros por Nome e País de Origem</p></div>
+        <div><h1>02. Fabricantes</h1><p>Cadastro e pesquisa por nome e país de origem</p></div>
         <button class="btn-primary">+ Novo Fabricante</button>
       </div>
       <div class="card">
@@ -125,10 +121,9 @@
       </div>
     </section>
 
-    <!-- 03 CATEGORIAS -->
     <section id="categorias" class="screen">
       <div class="topbar">
-        <div><h1>03. Categorias</h1><p>CRUD completo + Filtros por Nome/Descrição e Faixa de Valor da Diária</p></div>
+        <div><h1>03. Categorias</h1><p>Cadastro e filtro por nome/descrição e faixa de valor da diária</p></div>
         <button class="btn-primary">+ Nova Categoria</button>
       </div>
       <div class="card">
@@ -148,10 +143,9 @@
       </div>
     </section>
 
-    <!-- 04 VEICULOS -->
     <section id="veiculos" class="screen">
       <div class="topbar">
-        <div><h1>04. Veículos</h1><p>CRUD completo + Filtros por Modelo, Placa, Fabricante, Categoria e Disponibilidade</p></div>
+        <div><h1>04. Veículos</h1><p>Cadastro da frota e filtros por modelo, placa, fabricante, categoria e disponibilidade</p></div>
         <button class="btn-primary">+ Novo Veículo</button>
       </div>
       <div class="card">
@@ -172,10 +166,9 @@
       </div>
     </section>
 
-    <!-- 05 CLIENTES -->
     <section id="clientes" class="screen">
       <div class="topbar">
-        <div><h1>05. Clientes</h1><p>CRUD completo + Filtros por Nome, CPF e E-mail + Histórico de Locações</p></div>
+        <div><h1>05. Clientes</h1><p>Cadastro de clientes, filtros por nome, CPF e e-mail e histórico de locações</p></div>
         <button class="btn-primary">+ Novo Cliente</button>
       </div>
       <div class="card">
@@ -194,10 +187,9 @@
       </div>
     </section>
 
-    <!-- 06 ALUGUEIS -->
     <section id="alugueis" class="screen">
       <div class="topbar">
-        <div><h1>06. Aluguéis</h1><p>Nova Locação, Devolução com cálculo automático, Cancelamento e Filtros (INNER JOIN 5 tabelas)</p></div>
+        <div><h1>06. Aluguéis</h1><p>Nova locação, devolução, cancelamento e filtros combinados</p></div>
         <button class="btn-primary">+ Nova Locação</button>
       </div>
       <div class="card">
@@ -212,28 +204,27 @@
         <table>
           <thead><tr><th>ID</th><th>Cliente</th><th>Veículo / Marca</th><th>Período</th><th>KM</th><th>Total</th><th>Status</th><th>Ações</th></tr></thead>
           <tbody>
-            <tr><td>#1</td><td>Carlos Eduardo</td><td>Corolla Cross • Toyota (SUV)</td><td>01/10 → 06/10</td><td>12.500 → —</td><td>R$ 250/dia</td><td><span class="badge warn">Ativo</span></td><td>[Devolver] [Cancelar]</td></tr>
-            <tr><td>#2</td><td>Ana Beatriz</td><td>Onix • Chevrolet (Econômico)</td><td>10/09 → 14/09</td><td>8.000 → 8.420</td><td>R$ 320,00</td><td><span class="badge ok">Concluido</span></td><td>—</td></tr>
+            <tr><td>#1</td><td>Carlos Eduardo</td><td>Corolla Cross / Toyota (SUV)</td><td>01/10 a 06/10</td><td>12.500 a -</td><td>R$ 250/dia</td><td><span class="badge warn">Ativo</span></td><td>[Devolver] [Cancelar]</td></tr>
+            <tr><td>#2</td><td>Ana Beatriz</td><td>Onix / Chevrolet (Econômico)</td><td>10/09 a 14/09</td><td>8.000 a 8.420</td><td>R$ 320,00</td><td><span class="badge ok">Concluido</span></td><td>-</td></tr>
           </tbody>
         </table>
       </div>
     </section>
 
-    <!-- 07 CONSULTAS -->
     <section id="consultas" class="screen">
       <div class="topbar">
-        <div><h1>07. Central de Consultas &amp; Relatórios SQL</h1><p>Visualização interativa dos 5 endpoints com INNER JOIN e LEFT OUTER JOIN</p></div>
+        <div><h1>07. Consultas e Relatórios</h1><p>Visualização das 5 rotas de consulta com INNER JOIN e LEFT OUTER JOIN</p></div>
       </div>
       <div class="tabs">
-        <button class="tab active">1. Aluguéis Detalhados (INNER 5 tabelas)</button>
-        <button class="tab">2. Faturamento por Categoria (INNER + SUM)</button>
-        <button class="tab">3. Resumo de Clientes (LEFT JOIN)</button>
-        <button class="tab">4. Utilização de Veículos (INNER + LEFT)</button>
-        <button class="tab">5. Desempenho Fabricantes (LEFT Múltiplo)</button>
+        <button class="tab active">1. Aluguéis Detalhados</button>
+        <button class="tab">2. Faturamento / Categoria</button>
+        <button class="tab">3. Resumo de Clientes</button>
+        <button class="tab">4. Utilização de Veículos</button>
+        <button class="tab">5. Desempenho Fabricantes</button>
       </div>
       <div class="card">
-        <div class="route-pill">GET /api/consultas/alugueis-detalhados • INNER JOIN (Alugueis ⨝ Clientes ⨝ Veiculos ⨝ Fabricantes ⨝ Categorias)</div>
-        <div class="wire-chart">Área de Filtros Dinâmicos + Gráfico Analítico + Tabela de Resultados Reais do SQL Server</div>
+        <div class="route-pill">GET /api/consultas/alugueis-detalhados - INNER JOIN (5 tabelas)</div>
+        <div class="wire-chart">Filtros Dinâmicos + Gráfico + Tabela com Dados do SQL Server</div>
       </div>
     </section>
   </main>
